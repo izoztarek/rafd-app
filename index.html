@@ -2,37 +2,268 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>رفد</title>
-<meta name="description" content="رفد: الحضور والمرتبات والتقفيل">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رفد | كرت ولاء وإدارة للمطاعم والمقاهي</title>
+<meta name="description" content="كرت ولاء في محفظة الجوال، ورسالة عند قرب الزبون من المحل، ونظام حضور ورواتب وتقفيل يومي للمطاعم والمقاهي.">
+<meta property="og:title" content="رفد | كرت ولاء وإدارة للمطاعم والمقاهي">
+<meta property="og:description" content="زبائنك يرجعون، وفريقك منظّم، من مكان واحد.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_SA">
 <meta name="theme-color" content="#0B3B3A">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="رفد">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23F2A93B'/%3E%3Cpath d='M20 22h24v20H20z' fill='none' stroke='%230B3B3A' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+<script>
+/* ============================================================
+   إعدادات الموقع: عدّل هذه القيم فقط، والصفحة كلها تتحدّث.
+   اترك القيمة فارغة '' لتبقى العلامة [بين أقواس] ظاهرة.
+   ============================================================ */
+window.SITE = {
+  brand:   'رفد',          // اسم المنتج، مثال: 'ولاء'
+  company: '',          // اسم الشركة
+  whatsapp:'',          // رقم الواتساب بصيغة دولية بدون + أو أصفار، مثال: '9665XXXXXXXX'
+  email:   '',          // البريد الإلكتروني
+  prices:  { basic:'', adv:'', biz:'', custom:'' }   // أسعار الباقات بالأرقام، مثال: '99'. للمخصصة يمكن كتابة 'حسب الطلب'
+};
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B3B3A;--muted:#44534F;--bg:#F3F5F2;--sunk:#E6ECE8;--line:#D4DCD7;--amber:#F2A93B;--deep:#08302F;--font:'IBM Plex Sans Arabic',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+h1,h2{text-wrap:balance}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.in{max-width:1120px;margin:0 auto;padding-inline:24px}
+section{scroll-margin-top:12px}
+h2{font-size:clamp(26px,4vw,36px);line-height:1.35}
+.lead{color:var(--muted);font-size:17px}
+
+/* hero */
+.hero{background:var(--ink);color:#fff}
+nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;padding:22px 0}
+.logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700}
+.lm{width:38px;height:38px;border-radius:10px;background:var(--amber);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:14px}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px;font-size:15px;color:#D3E4E1}
+.links .cta{padding:9px 20px;border-radius:12px;background:var(--amber);color:var(--ink);font-weight:700}
+.hb{display:flex;flex-wrap:wrap;align-items:center;gap:48px;padding:48px 0 72px}
+.ht{flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:22px}
+.eyebrow{align-self:flex-start;padding:4px 14px;border-radius:999px;background:#14524F;color:#F2C777;font-size:14px;font-weight:600}
+h1{font-size:clamp(32px,5.4vw,52px);line-height:1.3;font-weight:700}
+.hp{font-size:18px;color:#C5DAD6;max-width:560px}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.b1{padding:14px 28px;border-radius:14px;background:var(--amber);color:var(--ink);font-weight:700;font-size:17px}
+.b2{padding:14px 28px;border-radius:14px;border:1.5px solid #3C7571;font-weight:600;font-size:17px}
+.sm{font-size:14px;color:#9CBDB8}
+.vis{flex:0 0 auto;width:340px;max-width:100%;height:440px;position:relative;margin-inline:auto}
+.pass{position:absolute;top:96px;inset-inline:0;border-radius:24px;background:#14605C;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.ph{display:flex;justify-content:space-between;align-items:center}
+.pn2{display:flex;align-items:center;gap:10px;font-weight:700}
+.pn2 .lm{width:30px;height:30px;border-radius:9px;font-size:12px}
+.pl{font-size:13px;color:#BFD6D2}
+.pd{font-size:14px;color:#D3E4E1}
+.sts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.st{aspect-ratio:1;border-radius:50%;border:2px dashed #6E9E99;color:#B7D1CD;display:grid;place-items:center;font-weight:600}
+.st.on{background:var(--amber);border:0;color:var(--ink);font-weight:700}
+.bar{height:8px;border-radius:999px;background:#2D7773}.bar i{display:block;width:62%;height:8px;border-radius:999px;background:var(--amber)}
+.note{position:absolute;top:0;inset-inline:14px;border-radius:18px;background:#fff;color:var(--ink);padding:12px 16px;box-shadow:0 14px 30px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:2px}
+.note div{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.note b{font-size:15px}.note span{font-size:13.5px;color:var(--muted)}
+
+/* sections */
+.pain{padding:72px 0 24px}
+.pain .in,.ftr .in,.how .in,.tiers .in,.plans .in{display:flex;flex-direction:column;gap:32px}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:28px}
+.pg div{border-top:2px solid var(--ink);padding-top:14px}
+.pg b{font-size:18px}.pg p{margin-top:6px;color:var(--muted)}
+.ftr{padding:64px 0}.ftr .in{gap:44px}
+.hd{max-width:640px;display:flex;flex-direction:column;gap:8px}
+.grp{display:flex;flex-direction:column;gap:16px}.grp h3{font-size:20px}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.fg.five{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.fc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.fc b{font-size:18px}.fc span{color:var(--muted);font-size:15px}
+.ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+.ic.teal{background:#E3EFEC}.ic.amber{background:#FBEBCB}
+.tiers{padding:72px 0;background:var(--sunk)}
+.tg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.tier{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.th{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chip{padding:4px 16px;border-radius:999px;font-weight:700;font-size:16px}
+.rule{font-size:14px;color:var(--muted)}
+ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;font-size:15px}
+li{display:flex;gap:10px;align-items:flex-start}
+.tk{flex:none;margin-top:4px}
+.fine{font-size:14px;color:var(--muted)}
+.how{padding:72px 0}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.sp{display:flex;gap:16px;align-items:flex-start}
+.sn{flex:none;width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px}
+.sp b{font-size:19px}.sp p{margin-top:4px;color:var(--muted)}
+.plans{padding:72px 0;background:var(--sunk)}
+.pgd{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:18px;padding-top:12px}
+.plan{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:26px 22px;display:flex;flex-direction:column;gap:16px;position:relative}
+.plan.feat{border-color:var(--amber)}
+.tag{position:absolute;top:-13px;inset-inline-start:22px;background:var(--amber);color:var(--ink);font-size:13px;font-weight:700;padding:3px 14px;border-radius:999px}
+.pn{font-size:22px;font-weight:700}.pt{font-size:14px;color:var(--muted);min-height:44px}
+.price{font-size:30px;font-weight:700}.pu{font-size:14px;color:var(--muted)}
+.pc{margin-top:auto;display:block;text-align:center;padding:12px;border-radius:14px;background:var(--ink);color:#fff;font-weight:700}
+.faq{padding:72px 0}.faq .w{max-width:820px;margin:0 auto;padding-inline:24px;display:flex;flex-direction:column;gap:28px}
+details{border-bottom:1px solid #CBD5CF;padding:18px 0}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:18px;font-weight:600}
+summary::-webkit-details-marker{display:none}
+.plus{font-size:24px;line-height:1;transition:transform .2s}
+details[open] .plus{transform:rotate(45deg)}
+details p{margin-top:10px;color:var(--muted)}
+.demo{padding:72px 0;background:var(--ink);color:#fff}
+.demo .in{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+.dl{flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.dl .lead{color:#C5DAD6}.dl .sm{font-size:15px}
+.form{flex:1 1 380px;min-width:0;background:#fff;color:var(--ink);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:16px}
+.fl{display:flex;flex-direction:column;gap:5px;flex:1 1 140px}
+.fl label{font-size:14px;font-weight:600}
+.fl input{padding:12px 14px;border:1.5px solid #C8D2CC;border-radius:12px;font-size:16px;font-family:inherit;width:100%;min-height:44px}
+.row{display:flex;flex-wrap:wrap;gap:16px}
+.send{padding:14px;border:0;border-radius:14px;background:var(--amber);color:var(--ink);font-weight:700;font-size:17px;font-family:inherit;min-height:48px;cursor:pointer}
+.chosen{font-size:14px;background:#FBEBCB;border-radius:10px;padding:6px 12px}
+.msg{font-size:14px;color:var(--muted)}
+.msg.warn{color:#7A4B00;background:#FFF2D6;border-radius:10px;padding:8px 12px}
+footer{padding:40px 0;background:var(--deep);color:#A9C4C0;font-size:14px}
+footer .in{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 32px;align-items:center}
+footer .logo{font-size:16px;color:#fff}footer .lm{width:32px;height:32px;font-size:12px}
+.fl2{display:flex;flex-wrap:wrap;gap:8px 24px}
+</style>
 </head>
 <body>
-<div class="wrap" id="app" lang="ar" dir="rtl">
-  <header class="top"><div class="brand"><span class="logo">رفد</span><span class="sub">الحضور والانصراف</span></div></header>
-  <div class="grid"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
-</div>
-<div id="modal" hidden></div>
-<div class="toast" id="toast" hidden role="status"></div>
-<noscript>لازم تفعّل JavaScript عشان النظام يشتغل.</noscript>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="orders.js"></script>
-<script src="payroll.js"></script>
-<script src="acct.js"></script>
-<script src="app.js"></script>
+
+<header class="hero">
+  <div class="in">
+    <nav aria-label="التنقل الرئيسي">
+      <a class="logo" href="#top"><span class="lm" aria-hidden="true">[ ]</span><span data-brand>رفد</span></a>
+      <div class="links">
+        <a href="#features">المميزات</a><a href="#tiers">فئات العملاء</a><a href="#how">كيف يعمل</a><a href="#plans">الباقات</a><a href="#faq">الأسئلة</a>
+        <a href="app/">دخول</a><a class="cta" href="signup/">ابدأ تجربة مجانية</a>
+      </div>
+    </nav>
+    <div class="hb" id="top">
+      <div class="ht">
+        <span class="eyebrow">للمطاعم والمقاهي</span>
+        <h1>زبائنك يرجعون، وفريقك منظّم، من مكان واحد</h1>
+        <p class="hp">كرت ولاء في محفظة الجوال، ورسالة تصل زبونك عندما يقترب من محلك، ونظام حضور ورواتب وتقفيل يومي يوفّر عليك ساعات كل أسبوع.</p>
+        <div class="btns"><a class="b1" href="signup/">ابدأ تجربة مجانية</a><a class="b2" href="#how">كيف يعمل</a></div>
+        <div class="sm">تجربة ١٤ يوماً بدون بطاقة · اشتراك شهري · واجهة عربية بالكامل</div>
+      </div>
+      <div class="vis" role="img" aria-label="مثال على كرت الولاء في المحفظة ورسالة تصل الزبون عند قربه من المحل">
+        <div class="pass">
+          <div class="ph"><div class="pn2"><span class="lm" aria-hidden="true">[ ]</span>كرت الولاء</div><span class="pl">فضية</span></div>
+          <div class="pd">5 من 8 زيارات · الهدية: قهوة مجانية</div>
+          <div class="sts"><div class="st on">✓</div><div class="st on">✓</div><div class="st on">✓</div><div class="st on">✓</div><div class="st on">✓</div><div class="st">6</div><div class="st">7</div><div class="st">8</div></div>
+          <div class="bar"><i></i></div>
+        </div>
+        <div class="note"><div><span data-brand>رفد</span><span>الآن</span></div><b>اشتقنا لك! قهوتك علينا اليوم</b><span>أنت قريب من فرع الوسط. اعرض الكرت واحصل على مشروبك.</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="pain"><div class="in">
+  <h2>مشاكل تعرفها جيداً في إدارة المطعم</h2>
+  <div class="pg">
+    <div><b>زبون زارك مرة ولم يرجع</b><p>ليس لديك طريقة لتذكّره بك أو لتكافئه على ولائه.</p></div>
+    <div><b>موظف يتأخر وأنت لا تعرف</b><p>التأخير يُكتشف آخر الشهر، وتبدأ المجادلات.</p></div>
+    <div><b>نقص في الدرج آخر اليوم</b><p>فرق الكاش يضيع بين الورديات ولا أحد مسؤول.</p></div>
+    <div><b>حساب الرواتب يأخذ ساعات</b><p>خصومات يدوية وأخطاء وخلافات مع الموظفين.</p></div>
+  </div>
+</div></section>
+
+<section class="ftr" id="features"><div class="in">
+  <div class="hd"><h2>كل ما يحتاجه مطعمك في نظام واحد</h2><p class="lead">ابدأ بكرت الولاء، وأضف الحضور والمرتبات والتقفيل متى احتجتها.</p></div>
+  <div class="grp"><h3>لزبائنك</h3><div class="fg"><div class="fc"><div class="ic teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z M3 10h18"/></svg></div><b>كرت ولاء في المحفظة</b><span>يضيفه الزبون إلى Apple Wallet أو Google Wallet بمسح كود، وتُحسب له زيارة عند كل مسح.</span></div><div class="fc"><div class="ic teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 9-9 9-9-9z"/></svg></div><b>فئات الولاء</b><span>حدّد عدد الزيارات لكل فئة، مثل الماسية بعد 20 زيارة في الشهر، واختر مميزاتها بنفسك.</span></div><div class="fc"><div class="ic teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z M12 12a2 2 0 100-4 2 2 0 000 4z"/></svg></div><b>رسالة عند القرب</b><span>تصل زبائنك الذين لديهم الكرت عندما يمرّون قرب فرعك، بعد موافقتهم على استخدام الموقع.</span></div><div class="fc"><div class="ic teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 108-8 M4 4v5h5"/></svg></div><b>حملة "اشتقنا لك"</b><span>رسالة تلقائية للزبون الذي غاب المدة التي تحددها، ومعها عرض يعيده إليك.</span></div></div></div>
+  <div class="grp"><h3>لإدارتك</h3><div class="fg five"><div class="fc"><div class="ic amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v5l3 2 M12 3a9 9 0 100 18 9 9 0 000-18z"/></svg></div><b>الحضور والانصراف</b><span>الموظف يسجّل من تابلت الفرع برقمه السري، ويُحسب التأخير تلقائياً.</span></div><div class="fc"><div class="ic amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v11H3z M3 7l3-3h12l3 3 M15 12.5h3"/></svg></div><b>المرتبات</b><span>خصم التأخير والغياب حسب قواعدك، وكشف راتب لكل موظف يصلك آخر الشهر.</span></div><div class="fc"><div class="ic amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v16H5z M9 9h6 M9 13h6 M9 17h3"/></svg></div><b>تقفيل اليوم</b><span>الكاشير يدخل الأرقام وتعرف فرق الدرج فوراً، مع المصروفات والأرباح.</span></div><div class="fc"><div class="ic amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l9-5 9 5v8l-9 5-9-5z M3 8l9 5 9-5 M12 13v8"/></svg></div><b>طلبات المصنع</b><span>الفرع يطلب النواقص، والمصنع يرى الطلب ويحدّث حالته.</span></div><div class="fc"><div class="ic amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B3B3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-8 M12 20V5 M19 20v-5"/></svg></div><b>لوحة المالك</b><span>مبيعات الفروع والتنبيهات وقرارات اليوم في صفحة واحدة.</span></div></div></div>
+</div></section>
+
+<section class="tiers" id="tiers"><div class="in">
+  <div class="hd" style="max-width:680px"><h2>فئات العملاء: كافئ أفضل زبائنك</h2><p class="lead">من يزورك أكثر يرتقي إلى فئة أعلى ويحصل على مميزات تحددها أنت. هذا مثال على الإعدادات، والأرقام والمميزات كلها قابلة للتعديل.</p></div>
+  <div class="tg"><div class="tier"><div class="th"><span class="chip" style="background:#E1E5E8;color:#2E3A44">فضية</span><span class="rule">من 5 زيارات في الشهر</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>مشروب مجاني كل شهر</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>عروض خاصة بالفئة</span></li></ul></div><div class="tier"><div class="th"><span class="chip" style="background:#FBE7B5;color:#6B4200">ذهبية</span><span class="rule">من 10 زيارات في الشهر</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>خصم 10% على الطلب</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>مشروب مجاني كل شهر</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>هدية في عيد الميلاد</span></li></ul></div><div class="tier"><div class="th"><span class="chip" style="background:#D6E6FA;color:#14335F">ماسية</span><span class="rule">من 20 زيارة في الشهر</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>خصم 15% على الطلب</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>أولوية في التجهيز</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>هدية في عيد الميلاد</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>دعوة للأصناف الجديدة قبل غيرها</span></li></ul></div></div>
+  <p class="fine">يظهر اسم الفئة وشريط التقدم على كرت الزبون في المحفظة، فيعرف كم بقي له ليصل إلى الفئة التالية.</p>
+</div></section>
+
+<section class="how" id="how"><div class="in">
+  <h2>كيف يعمل</h2>
+  <div class="sg">
+    <div class="sp"><span class="sn">1</span><div><b>نجهّز حسابك</b><p>نضيف فروعك وموظفيك، ونضبط قواعد الولاء والرواتب حسب مطعمك.</p></div></div>
+    <div class="sp"><span class="sn">2</span><div><b>زبائنك يضيفون الكرت</b><p>يمسحون كود المحل بجوالهم ويحفظون الكرت، وتبدأ زياراتهم بالتراكم.</p></div></div>
+    <div class="sp"><span class="sn">3</span><div><b>تتابع وتقرر</b><p>لوحة المالك تعرض المبيعات والحضور والحملات، وتنبّهك لما يحتاج قرارك.</p></div></div>
+  </div>
+</div></section>
+
+<section class="plans" id="plans"><div class="in">
+  <div class="hd"><h2>باقة تناسب حجم مطعمك</h2><p class="lead">اشتراك شهري بدون عقود طويلة. وإن لم تجد ما يناسبك نصمّم لك باقة مخصصة.</p></div>
+  <div class="pgd"><div class="plan"><div><div class="pn">الأساسية</div><div class="pt">لمطعم يريد زبائن أوفياء</div></div><div><span class="price" data-price="basic">[السعر]</span> <span class="pu">ر.س / شهرياً</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>كرت ولاء في المحفظة</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>مسح الكود وحساب الزيارات</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>هدية عند اكتمال الزيارات</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>فرع واحد</span></li></ul><a class="pc" href="signup/?plan=basic">ابدأ تجربتك</a></div><div class="plan feat"><span class="tag">الأكثر طلباً</span><div><div class="pn">المتقدمة</div><div class="pt">لمن يريد إعادة زبائنه بنفسه</div></div><div><span class="price" data-price="adv">[السعر]</span> <span class="pu">ر.س / شهرياً</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>كل ما في الأساسية</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>فئات الولاء</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>رسالة عند القرب من المحل</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>حملة "اشتقنا لك"</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>عدة فروع</span></li></ul><a class="pc" href="signup/?plan=adv">ابدأ تجربتك</a></div><div class="plan"><div><div class="pn">الأعمال</div><div class="pt">لمن يدير فريقاً وفروعاً</div></div><div><span class="price" data-price="biz">[السعر]</span> <span class="pu">ر.س / شهرياً</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>كل ما في المتقدمة</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>الحضور والانصراف</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>مرتبات وخصم تلقائي</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>تقفيل اليوم والأرباح</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>طلبات المصنع</span></li></ul><a class="pc" href="signup/?plan=biz">ابدأ تجربتك</a></div><div class="plan"><div><div class="pn">المخصصة</div><div class="pt">صمّمها حسب مطعمك</div></div><div><span class="price" data-price="custom">[السعر]</span> <span class="pu">ر.س / شهرياً</span></div><ul><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>ما تختاره مما سبق</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>ميزات تضاف بناءً على طلبك</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>ربط ببرنامج الكاشير</span></li><li><svg class="tk" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B7F4B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>دعم وإعداد مخصص</span></li></ul><a class="pc" href="#demo" data-plan="المخصصة">اطلب عرضاً</a></div></div>
+</div></section>
+
+<section class="faq" id="faq"><div class="w">
+  <h2>أسئلة شائعة</h2>
+  <div><details><summary>هل يحتاج زبائني إلى تحميل تطبيق؟<span class="plus" aria-hidden="true">+</span></summary><p>لا. يضيف الزبون الكرت إلى Apple Wallet أو Google Wallet مباشرة من جواله بمسح كود.</p></details><details><summary>هل تصل رسالة القرب دائماً؟<span class="plus" aria-hidden="true">+</span></summary><p>نظام الجوال هو الذي يقرر توقيت ظهور رسالة القرب، وقد تتأخر أو لا تظهر. لذلك نضيف حملة "اشتقنا لك" التي لا تعتمد على الموقع، وتصل الزبون الذي غاب عنك عدة أيام.</p></details><details><summary>ماذا عن موافقة الزبون على استخدام موقعه؟<span class="plus" aria-hidden="true">+</span></summary><p>لا تُرسل رسالة القرب إلا لمن أضاف الكرت وسمح باستخدام موقعه، ويستطيع إيقافها في أي وقت.</p></details><details><summary>هل أحتاج إلى ربط نظام الكاشير؟<span class="plus" aria-hidden="true">+</span></summary><p>لا. يعمل النظام بدون ربط، والكاشير يمسح كود الزبون بجواله أو بتابلت الفرع. الربط ببرنامج الكاشير متاح في الباقة المخصصة.</p></details><details><summary>هل يناسب المطاعم التي لها أكثر من فرع؟<span class="plus" aria-hidden="true">+</span></summary><p>نعم. تتابع كل الفروع من لوحة واحدة، وتقارن مبيعاتها وحضور موظفيها وفروق الدرج. تعدد الفروع متاح من الباقة المتقدمة.</p></details><details><summary>هل هناك عقد طويل؟<span class="plus" aria-hidden="true">+</span></summary><p>الاشتراك شهري بدون عقود طويلة.</p></details></div>
+</div></section>
+
+<section class="demo" id="demo"><div class="in">
+  <div class="dl">
+    <h2>عندك سؤال أو تحتاج باقة مخصصة؟</h2>
+    <p class="lead">اترك بياناتك ونتواصل معك عبر واتساب. وإن كنت جاهزاً، <a href="signup/" style="text-decoration:underline">ابدأ تجربتك المجانية الآن</a>.</p>
+    <div class="sm">أو راسلنا مباشرة: <span data-wa>[رقم الواتساب]</span> · <span data-email>[البريد الإلكتروني]</span></div>
+  </div>
+  <form class="form" id="demoForm" novalidate>
+    <div class="fl"><label for="f1">اسمك</label><input id="f1" name="name" autocomplete="name" required></div>
+    <div class="fl"><label for="f2">اسم المطعم أو المقهى</label><input id="f2" name="biz" required></div>
+    <div class="row">
+      <div class="fl"><label for="f3">المدينة</label><input id="f3" name="city" autocomplete="address-level2"></div>
+      <div class="fl"><label for="f4">رقم الواتساب</label><input id="f4" name="phone" type="tel" dir="ltr" inputmode="tel" autocomplete="tel" style="text-align:right" required></div>
+    </div>
+    <div class="chosen" id="chosen" hidden></div>
+    <button class="send" type="submit">تواصل معي</button>
+    <p class="msg" id="msg" role="status" aria-live="polite">بالضغط على الزر ستفتح محادثة واتساب جاهزة برسالتك. نستخدم بياناتك فقط للتواصل معك بخصوص التجربة.</p>
+  </form>
+</div></section>
+</main>
+
+<footer><div class="in">
+  <div class="logo"><span class="lm" aria-hidden="true">[ ]</span><span data-brand>رفد</span></div>
+  <div class="fl2"><a href="#features">المميزات</a><a href="#plans">الباقات</a><a href="#faq">الأسئلة</a><span>سياسة الخصوصية</span><span>شروط الاستخدام</span></div>
+  <div>© <span data-company>[اسم الشركة]</span>. جميع الحقوق محفوظة.</div>
+</div></footer>
+
+<script>
+(function(){
+  var S = window.SITE || {};
+  function fill(sel, val){ if(!val) return; document.querySelectorAll(sel).forEach(function(e){ e.textContent = val; }); }
+  fill('[data-brand]', S.brand); fill('[data-company]', S.company); fill('[data-email]', S.email);
+  fill('[data-wa]', S.whatsapp ? '+' + S.whatsapp : '');
+  if (S.brand) document.title = S.brand + ' | كرت ولاء وإدارة للمطاعم والمقاهي';
+  var P = S.prices || {};
+  document.querySelectorAll('[data-price]').forEach(function(e){
+    var v = P[e.getAttribute('data-price')]; if (v) e.textContent = v;
+  });
+  var plan = '', chosen = document.getElementById('chosen');
+  document.querySelectorAll('[data-plan]').forEach(function(a){
+    a.addEventListener('click', function(){ plan = a.getAttribute('data-plan'); chosen.hidden = false; chosen.textContent = 'الباقة المهتم بها: ' + plan; });
+  });
+  var form = document.getElementById('demoForm'), msg = document.getElementById('msg');
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var f = form.elements, name = f.name.value.trim(), biz = f.biz.value.trim(), phone = f.phone.value.trim();
+    if (!name || !biz || !phone){ msg.className = 'msg warn'; msg.textContent = 'اكتب اسمك واسم المطعم ورقم الواتساب.'; return; }
+    if (!S.whatsapp){ msg.className = 'msg warn'; msg.textContent = 'الإرسال غير مفعّل بعد: أضف رقم الواتساب في إعدادات الملف.'; return; }
+    var text = 'طلب تواصل' + (S.brand ? ' ' + S.brand : '') + '\nالاسم: ' + name + '\nالمطعم: ' + biz + '\nالمدينة: ' + (f.city.value.trim() || '-') + '\nرقم الواتساب: ' + phone + (plan ? '\nالباقة: ' + plan : '');
+    msg.className = 'msg'; msg.textContent = 'جارٍ فتح واتساب...';
+    window.open('https://wa.me/' + String(S.whatsapp).replace(/\D/g,'') + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  });
+})();
+</script>
 </body>
 </html>

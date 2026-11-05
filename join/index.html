@@ -70,6 +70,9 @@ function msg(t){root.innerHTML='<p class="sub" role="status">'+esc(t)+'</p><foot
 var ua=navigator.userAgent||'',IOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1),AND=/Android/.test(ua);
 var API=String(window.RAFD_WALLET_API||'');
 var tid=new URLSearchParams(location.search).get('t')||'';
+// بنفتكر كرت العميل على نفس الموبايل عشان لو ضغط تاني ياخد نفس الكرت بدل ما يتعمله كرت جديد
+function saved(){try{return localStorage.getItem('rafd.card.'+tid)||''}catch(e){return ''}}
+function keep(id){try{localStorage.setItem('rafd.card.'+tid,id)}catch(e){}}
 function render(d){
   var c=window.RafdPass.norm(d);
   var g='<button class="w" data-w="google" type="button">أضف إلى Google Wallet</button>',a='<button class="w" data-w="apple" type="button">أضف إلى Apple Wallet</button>';
@@ -88,9 +91,9 @@ root.addEventListener('click',function(e){
   var b=e.target.closest&&e.target.closest('[data-w]');if(!b||!API||b.disabled)return;
   var er=document.getElementById('er'),nm=document.getElementById('nm');er.textContent='';
   var all=root.querySelectorAll('.w');Array.prototype.forEach.call(all,function(x){x.disabled=true});
-  fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tid:tid,platform:b.dataset.w,name:(nm&&nm.value||'').trim().slice(0,40)})})
+  fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tid:tid,platform:b.dataset.w,name:(nm&&nm.value||'').trim().slice(0,40),cardId:saved()})})
     .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j&&j.error||'x');return j})})
-    .then(function(j){if(typeof j.url==='string'&&/^https:\/\//.test(j.url))location.href=j.url;else throw new Error('x')})
+    .then(function(j){if(typeof j.url==='string'&&/^https:\/\//.test(j.url)){if(/^[A-Za-z0-9]{20,32}$/.test(j.cardId||''))keep(j.cardId);location.href=j.url}else throw new Error('x')})
     .catch(function(x){er.textContent=x&&x.message&&x.message.indexOf('limit')===0?'المطعم وصل للحد الأقصى من الكروت.':'حصلت مشكلة. جرب تاني بعد شوية.';Array.prototype.forEach.call(all,function(y){y.disabled=false})});
 });
 if(!/^[A-Za-z0-9_-]{1,40}$/.test(tid)){msg('الرابط مش مظبوط. اطلب الملصق من المطعم تاني.');return}

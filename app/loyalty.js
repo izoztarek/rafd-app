@@ -43,12 +43,31 @@ function cardDoc(c,visits,cfg){
     visits:visits.slice(-800),updatedAt:SV()};
 }
 const evalC=(c,now)=>{const cfg=cfgNow();return TI().evaluate(c.visits||[],cfg,now||Date.now(),cfg.tz)};
+/* وضعين: tiers (فئات + كرت ويب عام، للمطاعم القديمة والمتقدمة) أو stamps (كرت أختام للأساسية) */
+const stampsMode=()=>!T().tiersOn();
+const SK=()=>window.RafdStamps;
+const stampCfg=()=>SK().norm(L.cfg&&L.cfg.card);
+const stampSt=c=>SK().state(c,stampCfg());
+/* عرض التقدّم حسب الوضع: pill، سطر العدد، الشريط، رسالة، ونص مختصر للقايمة */
+function P(c,now){
+  const t=T(),{esc}=t;
+  if(stampsMode()){
+    const s=stampSt(c);
+    return {pill:s.available>0?'<span class="pill ok">هدية جاهزة</span>':'<span class="pill">'+nf(s.progress)+'/'+nf(s.N)+'</span>',
+      big:nf(s.available>0?s.N:s.progress),unit:'ختم من '+nf(s.N),
+      bar:'<div class="lbar" role="progressbar" aria-valuenow="'+Math.round(s.ratio*100)+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+Math.round(s.ratio*100)+'%"></i></div>',
+      nudge:SK().nudge(s),short:nf(s.n)+' زيارة',st:s,up:false};
+  }
+  const r=evalC(c,now);
+  return {pill:tierPill(r),big:nf(r.count),unit:'زيارة في '+(cfgNow().window==='month'?'الشهر ده':'الفترة'),bar:bar(r),nudge:TI().nudge(r),short:nf(r.count)+' زيارة',r,up:false};
+}
 const tierPill=r=>r.tier?'<span class="pill ok">'+T().esc(r.tier.name)+'</span>':'<span class="pill">بدون فئة</span>';
 const bar=r=>'<div class="lbar" role="progressbar" aria-valuenow="'+Math.round(r.progress*100)+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+Math.round(r.progress*100)+'%"></i></div>';
 
 /* ---------- data ---------- */
 function clear(){
   L.unsubs.forEach(f=>{try{f()}catch(e){}});L.unsubs=[];L.tid=null;L.cust=[];L.cfg=null;L.ok={c:false,g:false};L.err=false;L.form=null;L.dup=null;L.del=null;L.draft=null;L.q='';L.kq='';
+  if(window.RafdDesign)window.RafdDesign.clear();
 }
 function sub(){
   const t=T(),S=t.S;if(!S.db||!S.tid||!(S.isAdmin||S.deviceOk))return;
@@ -59,23 +78,30 @@ function sub(){
   L.unsubs.push(S.db.doc('config/loyalty').onSnapshot(s=>{L.cfg=s.exists?s.data():null;L.ok.g=true;refresh()},fail('g')));
 }
 const ready=()=>L.ok.c&&L.ok.g;
-const TABS=['customers','lset'];
+const TABS=['customers','lcard','lset'];
 function refresh(){
   const t=T();if(!t)return;const {S,$}=t;
   if(typeof L.onChange==='function'){try{L.onChange()}catch(e){}}
   if(S.view==='admin'&&TABS.indexOf(S.tab)>=0&&$('#abody')){
     const a=document.activeElement;
     if(S.tab==='customers'&&$('#lc-list')){$('#lc-list').innerHTML=custList(L.q);const st=$('#lc-stats');if(st)st.innerHTML=statsHTML();return}
+    if(S.tab==='lcard'&&$('#dz-pv'))return;
     if(a&&a.closest&&a.closest('#abody')&&/INPUT|SELECT|TEXTAREA/.test(a.tagName))return;
     $('#abody').innerHTML=tabHTML(S.tab);
   }
   if($('#lk-list'))$('#lk-list').innerHTML=kList(L.kq);
 }
 function tab(name){sub();if(L.err)return '<div class="empty">مقدرتش أحمّل العملاء. اتأكد إن الباقة فيها الولاء، وإن فيه نت.</div>';return ready()?tabHTML(name):'<div class="empty">جاري التحميل...</div>'}
-function tabHTML(name){return {customers:tabCust,lset:tabSet}[name]()}
+function tabHTML(name){return {customers:tabCust,lset:tabSet,lcard:()=>window.RafdDesign?window.RafdDesign.tab():''}[name]()}
 
 /* ---------- قائمة العملاء (إدارة) ---------- */
 function statsHTML(){
+  if(stampsMode()){
+    let rdy=0,act=0;const k=new Date();k.setHours(0,0,0,0);const from=k.getTime();
+    L.cust.forEach(c=>{if(stampSt(c).available>0)rdy++;if((c.visits||[]).some(v=>v>=from))act++});
+    const lim=T().limitOf('cards');
+    return '<div class="stat"><b>'+nf(L.cust.length)+(isFinite(lim)?'<small class="muted"> / '+nf(lim)+'</small>':'')+'</b><span>كرت صادر</span></div><div class="stat ok"><b>'+nf(act)+'</b><span>زاروا النهارده</span></div><div class="stat"><b>'+nf(rdy)+'</b><span>هدايا جاهزة</span></div>';
+  }
   const cfg=cfgNow(),now=Date.now();
   let withTier=0,active=0;
   L.cust.forEach(c=>{const r=TI().evaluate(c.visits||[],cfg,now,cfg.tz);if(r.tier)withTier++;if(r.count>0)active++});
@@ -84,11 +110,12 @@ function statsHTML(){
 function matches(c,q){
   const t=T();const s=t.norm(q);if(!s)return true;
   const d=digits(q);
-  return t.norm(c.name).indexOf(s)>=0||(d.length>=2&&c.id.indexOf(d)>=0);
+  const code=String(q).trim().toLowerCase();
+  return t.norm(c.name).indexOf(s)>=0||(d.length>=2&&c.id.indexOf(d)>=0)||(/^[a-z0-9]{5,}$/.test(code)&&String(c.cardId||'').toLowerCase().indexOf(code)===0);
 }
 function rowHTML(c,act){
-  const t=T(),{esc}=t;const r=evalC(c);
-  return '<button class="lrow" data-la="'+act+'" data-id="'+esc(c.id)+'"><span class="lw"><b>'+esc(c.name)+'</b><span class="muted" dir="ltr">'+esc(c.id)+'</span></span><span class="lm">'+tierPill(r)+'<span class="muted">'+nf(r.count)+' زيارة · '+ago(c.last)+'</span></span></button>';
+  const t=T(),{esc}=t;const p=P(c);
+  return '<button class="lrow" data-la="'+act+'" data-id="'+esc(c.id)+'"><span class="lw"><b>'+esc(c.name)+'</b><span class="muted" dir="ltr">'+esc(c.id)+'</span></span><span class="lm">'+p.pill+'<span class="muted">'+p.short+' · '+ago(c.last)+'</span></span></button>';
 }
 function custList(q){
   const arr=L.cust.filter(c=>matches(c,q)).sort((a,b)=>(b.last||0)-(a.last||0));
@@ -117,10 +144,25 @@ function openKiosk(){
   if(!S.db||!(S.isAdmin||S.deviceOk))return;
   L.kq='';
   openModal('<div class="pf"><h2>زيارة عميل</h2><p class="muted" style="margin:0">دوّر بالتليفون أو الاسم، أو ضيف عميل جديد.</p>'+
-    '<input id="lk-q" class="inp" type="search" inputmode="search" placeholder="رقم التليفون أو الاسم" autocomplete="off" autofocus>'+
+    (window.RafdScan?'<button class="btn lg" data-la="scan">امسح كود الكرت بالكاميرا</button>':'')+
+    '<input id="lk-q" class="inp" type="search" inputmode="search" placeholder="رقم التليفون أو الاسم أو كود الكرت" autocomplete="off" autofocus>'+
     '<div class="list lrows" id="lk-list">'+(ready()?kList(''):'<div class="empty">جاري التحميل...</div>')+'</div>'+
     '<div class="actions"><button class="btn" data-act="close">إغلاق</button></div></div>');
   setTimeout(()=>{const i=t.$('#lk-q');if(i)i.focus()},50);
+}
+
+/* ---------- مسح كود الكرت ---------- */
+function scanOpen(){
+  const t=T();if(!window.RafdScan)return;sub();
+  window.RafdScan.open(text=>onScan(text));
+}
+function onScan(text){
+  const t=T(),{S,toast}=t;const p=window.RafdScan.parse(text);
+  if(!p){toast('الكود ده مش كرت ولاء من رفد');openKiosk();return}
+  if(p.tid!==S.tid){toast('الكرت ده لمطعم تاني');openKiosk();return}
+  const c=L.cust.find(x=>x.cardId===p.cardId);
+  if(!c){toast('الكرت ده مش متسجل عندنا');openKiosk();return}
+  visit(c.id);
 }
 
 /* ---------- عميل جديد ---------- */
@@ -140,22 +182,26 @@ async function create(){
   const err=m=>{$('#nf-err').textContent=m};
   if(!name){err('اكتب الاسم');return}
   if(ds.length<6||ds.length>15){err('رقم التليفون مش مظبوط');return}
+  if(L.cust.length>=t.limitOf('cards')){err('وصلت للحد الأقصى لباقتك ('+nf(t.limitOf('cards'))+' كرت). ترقّى لباقة أعلى لإصدار كروت جديدة.');return}
   const dup=L.cust.find(c=>c.id===ds||(ds.length>=9&&c.id.slice(-9)===ds.slice(-9)));
   if(dup){toast('العميل ده موجود');openCust(dup.id);return}
   L.busy=true;const btn=$('[data-la="create"]');if(btn)btn.disabled=true;
   const now=Date.now(),cfg=cfgNow(),cardId=rid(),visits=[now];
   const c={name,phone:ds,cardId};
   const b=raw().batch();
-  b.set(cRef(ds),{name,phone:ds,cardId,createdAt:SV(),visits,last:now,note:''});
-  b.set(kRef(cardId),cardDoc(c,visits,cfg));
+  const doc={name,phone:ds,cardId,createdAt:SV(),visits,last:now,note:''};
+  if(stampsMode()){doc.n=1;doc.rw=0}
+  b.set(cRef(ds),doc);
+  if(!stampsMode())b.set(kRef(cardId),cardDoc(c,visits,cfg));
   const ok=await wr(()=>b.commit());
   L.busy=false;
   if(!ok){if(btn)btn.disabled=false;return}
-  showDone({id:ds,name,phone:ds,cardId,visits,last:now},null,true);
+  showDone(Object.assign({id:ds,name,phone:ds,cardId,visits,last:now},stampsMode()?{n:1,rw:0}:{}),null,true);
 }
 
 /* ---------- تفاصيل العميل + تسجيل زيارة ---------- */
 function linkBlock(c){
+  if(stampsMode())return '';
   const t=T(),{esc}=t;const url=cardUrl(c.cardId),cfg=cfgNow(),S=t.S;
   let wa=digits(c.phone);
   if(wa.indexOf('00')===0)wa=wa.slice(2);else if(wa.charAt(0)==='0')wa=cfg.cc+wa.slice(1);
@@ -164,12 +210,13 @@ function linkBlock(c){
 }
 function openCust(id){
   const t=T(),{S,esc,openModal,fmtT,dkey,fromKey}=t;const c=L.cust.find(x=>x.id===id);if(!c){t.closeModal();return}
-  const r=evalC(c);const vs=(c.visits||[]).slice().sort((a,b)=>b-a).slice(0,8);
+  const p=P(c);const vs=(c.visits||[]).slice().sort((a,b)=>b-a).slice(0,8);
   const dup=L.dup===id;
   openModal('<div class="pf lcd"><h2>'+esc(c.name)+'</h2><div class="muted" dir="ltr" style="text-align:start">'+esc(c.id)+'</div>'+
-    '<div class="lcur">'+tierPill(r)+'<b>'+nf(r.count)+'</b><span class="muted">زيارة في '+(cfgNow().window==='month'?'الشهر ده':'الفترة')+'</span></div>'+bar(r)+
-    '<p style="margin:0">'+esc(TI().nudge(r))+'</p>'+
-    (r.atRisk?'<div class="bill warn" style="margin:0">قرّب ينزل من فئته لو ما زارش الأسبوع الجاي.</div>':'')+
+    '<div class="lcur">'+p.pill+'<b>'+p.big+'</b><span class="muted">'+p.unit+'</span></div>'+p.bar+
+    '<p style="margin:0">'+esc(p.nudge)+'</p>'+
+    (p.r&&p.r.atRisk?'<div class="bill warn" style="margin:0">قرّب ينزل من فئته لو ما زارش الأسبوع الجاي.</div>':'')+
+    (p.st&&p.st.available>0?'<div class="actions"><button class="btn lg" data-la="redeem" data-id="'+esc(c.id)+'">تسليم الهدية: '+esc(p.st.reward)+'</button></div>':'')+
     (dup?'<div class="bill warn" style="margin:0">اتسجلت زيارة '+ago(c.last)+'. تسجّل واحدة تانية؟</div>':'')+
     '<div class="actions"><button class="btn pri lg" data-la="visit" data-id="'+esc(c.id)+'">'+(dup?'أيوه، سجّل زيارة تانية':'سجّل زيارة')+'</button></div>'+
     linkBlock(c)+
@@ -183,22 +230,28 @@ async function visit(id,force){
   const now=Date.now();
   if(!force&&c.last&&now-c.last<30*60000&&L.dup!==id){L.dup=id;openCust(id);return}
   L.busy=true;L.dup=null;
-  const before=evalC(c,now),visits=trimVisits((c.visits||[]).concat(now),now),cfg=cfgNow();
+  const stamps=stampsMode();
+  const before=stamps?stampSt(c):evalC(c,now),visits=trimVisits((c.visits||[]).concat(now),now),cfg=cfgNow();
+  const upd={visits,last:now};if(stamps)upd.n=SK().total(c)+1;
   const b=raw().batch();
-  b.update(cRef(id),{visits,last:now});
-  b.set(kRef(c.cardId),cardDoc(c,visits,cfg));
+  b.update(cRef(id),upd);
+  if(!stamps)b.set(kRef(c.cardId),cardDoc(c,visits,cfg));
   const ok=await wr(()=>b.commit());
   L.busy=false;
-  if(ok)showDone(Object.assign({},c,{visits,last:now}),before,false);
+  if(ok)showDone(Object.assign({},c,{visits,last:now},stamps?{n:upd.n}:{}),before,false);
 }
 function showDone(c,before,isNew){
-  const t=T(),{esc,openModal}=t;const r=evalC(c);
-  const up=r.tier&&(!before||!before.tier||before.tier.key!==r.tier.key)&&!isNew;
+  const t=T(),{esc,openModal}=t;const p=P(c),r=p.r||{};
+  const stamps=stampsMode();
+  const up=!stamps&&r.tier&&(!before||!before.tier||before.tier.key!==r.tier.key)&&!isNew;
+  const got=stamps&&p.st.available>0&&(!before||before.available<p.st.available);
   openModal('<div class="pf lcd"><div class="lok" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
     '<h2 style="text-align:center">'+(isNew?'اتضاف '+esc(c.name)+' واتسجلت أول زيارة':'اتسجلت زيارة '+esc(c.name))+'</h2>'+
-    '<div class="lcur" style="justify-content:center">'+tierPill(r)+'<b>'+nf(r.count)+'</b><span class="muted">زيارة</span></div>'+bar(r)+
+    '<div class="lcur" style="justify-content:center">'+p.pill+'<b>'+p.big+'</b><span class="muted">'+(stamps?p.unit:'زيارة')+'</span></div>'+p.bar+
+    (got?'<div class="bill ok" style="margin:0">العميل كمّل كرته! سلّمه الهدية: '+esc(p.st.reward)+'</div>':'')+
+    (got?'<div class="actions" style="justify-content:center"><button class="btn pri lg" data-la="redeem" data-id="'+esc(c.id)+'">تسليم الهدية دلوقتي</button></div>':'')+
     (up?'<div class="bill ok" style="margin:0">ترقّى للفئة '+esc(r.tier.name)+(r.tier.perks&&r.tier.perks.length?': '+esc(r.tier.perks.join('، ')):'')+'</div>':'')+
-    '<p style="margin:0;text-align:center">'+esc(TI().nudge(r))+'</p>'+
+    '<p style="margin:0;text-align:center">'+esc(p.nudge)+'</p>'+
     (isNew?linkBlock(c):'')+
     '<div class="actions" style="justify-content:center"><button class="btn pri" data-la="kopen">عميل تاني</button><button class="btn" data-act="close">خلاص</button></div></div>');
 }
@@ -207,10 +260,20 @@ async function undo(id){
   L.busy=true;
   const visits=c.visits.slice().sort((a,b)=>a-b);visits.pop();
   const b=raw().batch();
-  b.update(cRef(id),{visits,last:visits.length?visits[visits.length-1]:0});
-  b.set(kRef(c.cardId),cardDoc(c,visits,cfgNow()));
+  const upd={visits,last:visits.length?visits[visits.length-1]:0};
+  if(stampsMode())Object.assign(upd,SK().afterUndo(c,stampCfg()));
+  b.update(cRef(id),upd);
+  if(!stampsMode())b.set(kRef(c.cardId),cardDoc(c,visits,cfgNow()));
   const ok=await wr(()=>b.commit());L.busy=false;
   if(ok){toast('اتلغت آخر زيارة');setTimeout(()=>openCust(id),150)}
+}
+async function redeem(id){
+  const t=T(),{wr,toast}=t;const c=L.cust.find(x=>x.id===id);if(!c||L.busy||!stampsMode())return;
+  const s=stampSt(c);if(s.available<1)return;
+  L.busy=true;
+  const ok=await wr(()=>cRef(id).update({rw:(Number(c.rw)||0)+1}));
+  L.busy=false;
+  if(ok){toast('اتسلّمت الهدية. الكرت بدأ من جديد');setTimeout(()=>openCust(id),150)}
 }
 function editForm(id){
   const t=T(),{esc,openModal}=t;const c=L.cust.find(x=>x.id===id);if(!c)return;
@@ -226,14 +289,14 @@ async function esave(id){
   if(!name){$('#ef-err').textContent='اكتب الاسم';return}
   const b=raw().batch();
   b.update(cRef(id),{name,note});
-  b.set(kRef(c.cardId),cardDoc(Object.assign({},c,{name}),c.visits||[],cfgNow()));
+  if(!stampsMode())b.set(kRef(c.cardId),cardDoc(Object.assign({},c,{name}),c.visits||[],cfgNow()));
   if(await wr(()=>b.commit())){toast('اتحفظ');setTimeout(()=>openCust(id),150)}
 }
 async function del(id){
   const t=T(),{wr,toast,closeModal}=t;const c=L.cust.find(x=>x.id===id);if(!c)return;
   if(L.del!==id){L.del=id;openCust(id);return}
   L.del=null;
-  const b=raw().batch();b.delete(cRef(id));b.delete(kRef(c.cardId));
+  const b=raw().batch();b.delete(cRef(id));if(!stampsMode())b.delete(kRef(c.cardId));
   if(await wr(()=>b.commit())){closeModal();toast('اتحذف العميل وكرته')}
 }
 
@@ -283,11 +346,13 @@ document.addEventListener('click',async e=>{
   const rerenderSet=()=>{const b=$('#abody');if(b&&S.tab==='lset')b.innerHTML=tabSet()};
   switch(a){
     case 'kopen':openKiosk();break;
+    case 'scan':scanOpen();break;
     case 'cust':L.del=null;openCust(el.dataset.id);break;
     case 'new':newForm(el.dataset.d,el.dataset.n);break;
     case 'create':create();break;
     case 'visit':visit(el.dataset.id);break;
     case 'undo':undo(el.dataset.id);break;
+    case 'redeem':redeem(el.dataset.id);break;
     case 'edit':editForm(el.dataset.id);break;
     case 'esave':esave(el.dataset.id);break;
     case 'del':del(el.dataset.id);break;
@@ -321,7 +386,7 @@ document.addEventListener('keydown',e=>{
 function stats(){
   const d=new Date();d.setHours(0,0,0,0);const from=d.getTime();
   let today=0;L.cust.forEach(c=>{(c.visits||[]).forEach(v=>{if(v>=from)today++})});
-  return {ready:ready(),customers:L.cust.length,hasCfg:!!L.cfg,visitsToday:today};
+  return {ready:ready(),customers:L.cust.length,hasCfg:!!L.cfg,designed:!!(L.cfg&&L.cfg.card),stamps:stampsMode(),visitsToday:today};
 }
-window.ThrillsLoy={tab,clear,openKiosk,sub,stats,onChange:fn=>{L.onChange=fn},_t:{digits,cardDoc,cfgNow,defaultCfg,firstName,trimVisits}};
+window.ThrillsLoy={tab,clear,openKiosk,scanOpen,onScan,sub,stats,cardCfg:()=>L.cfg&&L.cfg.card||null,onChange:fn=>{L.onChange=fn},_t:{digits,cardDoc,cfgNow,defaultCfg,firstName,trimVisits}};
 })();

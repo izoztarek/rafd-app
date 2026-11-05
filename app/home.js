@@ -27,7 +27,8 @@ function steps(){
   const L=modOn('loyalty')&&window.ThrillsLoy?window.ThrillsLoy.stats():null;
   if(modOn('loyalty')){
     out.push({t:'سجّل أول عميل',d:'اكتب رقم تليفونه واسمه. هتتسجل له أول زيارة ويتعمل له كرت تبعتله رابطه.',done:!!(L&&L.customers>0),btn:'سجّل عميل',attr:'data-la="kopen"',wait:!(L&&L.ready)});
-    out.push({t:'راجع فئات العملاء',d:'الفئات الجاهزة: فضية بعد ٥ زيارات، ذهبية ١٠، ماسية ٢٠ في الشهر. عدّل الأرقام والمزايا على مزاجك.',done:!!(L&&L.hasCfg),btn:'راجع الفئات',attr:'data-act="tab" data-t="lset"',wait:!(L&&L.ready)});
+    if(t.tiersOn())out.push({t:'راجع فئات العملاء',d:'الفئات الجاهزة: فضية بعد ٥ زيارات، ذهبية ١٠، ماسية ٢٠ في الشهر. عدّل الأرقام والمزايا على مزاجك.',done:!!(L&&L.hasCfg),btn:'راجع الفئات',attr:'data-act="tab" data-t="lset"',wait:!(L&&L.ready)});
+    if(t.feat('wallet'))out.unshift({t:'صمّم كرت الولاء',d:'اللوجو والألوان وعدد الزيارات للهدية ونص الهدية. ده شكل الكرت في محفظة العميل.',done:!!(L&&L.designed),btn:'صمّم الكرت',attr:'data-act="tab" data-t="lcard"',wait:!(L&&L.ready)});
   }
   if(modOn('attendance')){
     out.push({t:'ضيف موظفينك',d:'الاسم والفرع والشيفت والرقم السري. الموظف بيسجل حضوره من التابلت بالرقم ده.',done:S.staff.filter(s=>s.active!==false).length>0,btn:'ضيف موظف',attr:'data-act="tab" data-t="staff"'});

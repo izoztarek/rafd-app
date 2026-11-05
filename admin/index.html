@@ -5,20 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>رفد · لوحة المنصة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <style>
-:root{--bg:#f6f4ef;--card:#fff;--ink:#1d1b16;--mut:#6b675c;--line:#e4dfd3;--acc:#0f6b5a;--acc2:#e8f3f0;--bad:#b3261e;--warn:#9a6700}
-@media (prefers-color-scheme:dark){:root{--bg:#151410;--card:#201e19;--ink:#f1eee6;--mut:#a29d8f;--line:#35322a;--acc:#4fc4aa;--acc2:#173029;--bad:#ff8a80;--warn:#e3b341}}
+:root{--bg:#F3F5F2;--card:#fff;--ink:#0B3B3A;--mut:#44534F;--line:#D4DCD7;--acc:#14605C;--acc2:#E6ECE8;--amber:#F2A93B;--deep:#08302F;--bad:#B42F3F;--warn:#855400}
+@media (prefers-color-scheme:dark){:root{--bg:#08302F;--card:#0D3F3D;--ink:#F3F5F2;--mut:#A9C4C0;--line:#1F5E5A;--acc:#F2C777;--acc2:#14524F;--deep:#062423;--bad:#FF8A98;--warn:#FFC857;color-scheme:dark}}
 *{box-sizing:border-box}html,body{direction:rtl}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card)}
-h1{font-size:18px;margin:0}h2{font-size:16px;margin:0 0 10px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--deep);color:#F3F5F2}
+header .mut{color:#A9C4C0}header button{background:transparent;color:#F3F5F2;border-color:#3C7571}
+h1{font-size:19px;margin:0;display:flex;align-items:center;gap:10px;font-weight:700}
+h1::before{content:"";width:34px;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23F2A93B'/%3E%3Cpath d='M20 22h24v20H20z' fill='none' stroke='%230B3B3A' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}h2{font-size:16px;margin:0 0 10px}
 main{max-width:980px;margin:0 auto;padding:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
 label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
 input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
 input[dir=ltr]{direction:ltr;text-align:left}
 button{font:inherit;padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-button.p{background:var(--acc);border-color:var(--acc);color:#fff}button.d{color:var(--bad)}
+button.p{background:var(--amber);border-color:var(--amber);color:#0B3B3A;font-weight:700}button.d{color:var(--bad)}
 button:disabled{opacity:.5;cursor:not-allowed}
 .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 180px}
 .tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:var(--acc2);color:var(--acc)}

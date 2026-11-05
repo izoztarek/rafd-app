@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>رفد · لوحة المنصة</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d1b16;--mut:#6b675c;--line:#e4dfd3;--acc:#0f6b5a;--acc2:#e8f3f0;--bad:#b3261e;--warn:#9a6700}
+@media (prefers-color-scheme:dark){:root{--bg:#151410;--card:#201e19;--ink:#f1eee6;--mut:#a29d8f;--line:#35322a;--acc:#4fc4aa;--acc2:#173029;--bad:#ff8a80;--warn:#e3b341}}
+*{box-sizing:border-box}html,body{direction:rtl}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card)}
+h1{font-size:18px;margin:0}h2{font-size:16px;margin:0 0 10px}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input[dir=ltr]{direction:ltr;text-align:left}
+button{font:inherit;padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.p{background:var(--acc);border-color:var(--acc);color:#fff}button.d{color:var(--bad)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 180px}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:var(--acc2);color:var(--acc)}
+.tag.bad{background:#fde8e6;color:var(--bad)}.tag.warn{background:#fff4d6;color:var(--warn)}
+@media (prefers-color-scheme:dark){.tag.bad{background:#3a1d1a}.tag.warn{background:#3a2f12}}
+.t{display:grid;gap:10px}
+.ten{border:1px solid var(--line);border-radius:10px;padding:12px}
+.ten .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.feats{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.feats label{display:flex;align-items:center;gap:6px;margin:0;color:var(--ink);font-size:13px;border:1px solid var(--line);padding:4px 9px;border-radius:99px;cursor:pointer}
+.feats input{width:auto}
+.msg{padding:10px 12px;border-radius:8px;margin:10px 0;background:var(--acc2);color:var(--ink)}
+.msg.err{background:#fde8e6;color:var(--bad)}@media (prefers-color-scheme:dark){.msg.err{background:#3a1d1a}}
+.hide{display:none!important}.mut{color:var(--mut);font-size:13px}
+</style>
+</head>
+<body>
+<header><h1>رفد · لوحة المنصة</h1><div><span id="who" class="mut"></span> <button id="out" class="hide">خروج</button></div></header>
+<main>
+<div id="msg"></div>
+
+<section id="login" class="card hide">
+  <h2>دخول مالك المنصة</h2>
+  <label>البريد</label><input id="em" type="email" dir="ltr" autocomplete="username">
+  <label>كلمة المرور</label><input id="pw" type="password" dir="ltr" autocomplete="current-password">
+  <p><button class="p" id="go">دخول</button></p>
+</section>
+
+<section id="denied" class="card hide">
+  <h2>الحساب ده مش مسجّل كمالك منصة</h2>
+  <p class="mut">اطلب من مالك المنصة يضيف الـ UID بتاعك:</p>
+  <p dir="ltr" id="uid" style="user-select:all;font-family:monospace"></p>
+</section>
+
+<div id="app" class="hide">
+  <section class="card">
+    <h2>مطعم جديد</h2>
+    <div class="row">
+      <div><label>اسم المطعم</label><input id="n_name"></div>
+      <div><label>الباقة</label><select id="n_plan"></select></div>
+      <div><label>الحالة</label><select id="n_status"><option value="trial">تجريبي</option><option value="active">نشط</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>بريد المالك</label><input id="n_mail" type="email" dir="ltr"></div>
+      <div><label>كلمة مرور مؤقتة (٨ أحرف+)</label><input id="n_pass" type="text" dir="ltr" autocomplete="off"></div>
+    </div>
+    <p class="mut">هيتعمل حساب للمالك وهو يغيّر كلمة المرور بعد أول دخول. الباقة بتحدد الميزات ويمكن تعديلها بعدين.</p>
+    <p><button class="p" id="create">إنشاء المطعم والمالك</button></p>
+  </section>
+
+  <section class="card">
+    <h2>المطاعم <span id="cnt" class="mut"></span></h2>
+    <div id="list" class="t"></div>
+  </section>
+</div>
+</main>
+
+<script type="module">
+const CFG={apiKey:"AIzaSyD2Pc_rC2j10pMO1TN2MumSqamN-szA4uY",authDomain:"rafd-platform-5fb3a.firebaseapp.com",projectId:"rafd-platform-5fb3a",storageBucket:"rafd-platform-5fb3a.firebasestorage.app",messagingSenderId:"251733051157",appId:"1:251733051157:web:dbbd4e9ebb7db770b34b1c"};
+export const FEATURES={attendance:'الحضور',payroll:'المرتبات',closing:'التقفيل',factory:'طلبات المصنع',loyalty:'الولاء والفئات',near:'رسالة القرب',win:'اشتقنا لك'};
+export const PLANS={
+  basic:{label:'الأساسية',features:['attendance','closing']},
+  adv:{label:'المتقدمة',features:['attendance','closing','payroll','loyalty']},
+  biz:{label:'الأعمال',features:['attendance','closing','payroll','loyalty','factory','near','win']},
+  custom:{label:'مخصصة',features:[]}
+};
+const STATUS={trial:['تجريبي',''],active:['نشط',''],overdue:['متأخر السداد','warn'],suspended:['موقوف','bad'],cancelled:['ملغي','bad']};
+const $=id=>document.getElementById(id);
+const msg=(t,err)=>{$('msg').innerHTML=t?`<div class="msg ${err?'err':''}">${t}</div>`:''};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slug=s=>(s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'r')+'-'+Math.random().toString(36).slice(2,6);
+
+// ---- data layer: real Firebase or ?mock=1 for UI tests ----
+let api;
+if(new URLSearchParams(location.search).get('mock')==='1'){
+  const db={tenants:{},admins:{'u1':1}};let user=null;
+  api={async init(cb){setTimeout(()=>cb(user),0)},
+    async login(e,p){user={uid:'u1',email:e};api._cb(user)},async logout(){user=null;api._cb(null)},
+    async isAdmin(uid){return !!db.admins[uid]},
+    async listTenants(){return Object.entries(db.tenants).map(([id,t])=>({id,...t}))},
+    async createTenant(id,t,mail,pass){db.tenants[id]={...t,ownerEmail:mail}},
+    async updateTenant(id,p){Object.assign(db.tenants[id],p)}};
+  const o=api.init;api.init=async cb=>{api._cb=cb;return o(cb)};
+}else{
+  const V='11.0.2',B=`https://www.gstatic.com/firebasejs/${V}/`;
+  const [{initializeApp},A,F]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+  const app=initializeApp(CFG),auth=A.getAuth(app),db=F.getFirestore(app);
+  api={init:async cb=>A.onAuthStateChanged(auth,cb),
+    login:(e,p)=>A.signInWithEmailAndPassword(auth,e,p),logout:()=>A.signOut(auth),
+    async isAdmin(uid){try{return (await F.getDoc(F.doc(db,'platformAdmins',uid))).exists()}catch(e){return false}},
+    async listTenants(){const s=await F.getDocs(F.collection(db,'tenants'));return s.docs.map(d=>({id:d.id,...d.data()}))},
+    async createTenant(id,t,mail,pass){
+      // حساب المالك عبر نسخة تطبيق ثانية حتى لا نخرج من جلسة مالك المنصة
+      const sec=initializeApp(CFG,'sec'+Date.now()),sa=A.getAuth(sec);
+      const cr=await A.createUserWithEmailAndPassword(sa,mail,pass);const uid=cr.user.uid;await A.signOut(sa);
+      await F.setDoc(F.doc(db,'tenants',id),{...t,ownerEmail:mail,createdAt:F.serverTimestamp()});
+      await F.setDoc(F.doc(db,'tenants',id,'members',uid),{role:'owner',email:mail,createdAt:F.serverTimestamp()});
+      await F.setDoc(F.doc(db,'userTenants',uid),{tid:id,role:'owner',email:mail});
+    },
+    async updateTenant(id,p){await F.updateDoc(F.doc(db,'tenants',id),p)}};
+}
+
+// ---- UI ----
+for(const [k,v] of Object.entries(PLANS))$('n_plan').insertAdjacentHTML('beforeend',`<option value="${k}">${v.label}</option>`);
+const feats=a=>Object.fromEntries(Object.keys(FEATURES).map(k=>[k,a.includes(k)]));
+
+async function render(){
+  const ts=(await api.listTenants()).sort((a,b)=>(a.name||'').localeCompare(b.name||'','ar'));
+  $('cnt').textContent=`(${ts.length})`;
+  $('list').innerHTML=ts.length?ts.map(t=>{
+    const st=STATUS[t.status]||[t.status,''];
+    return `<div class="ten" data-id="${esc(t.id)}">
+      <div class="top"><div><b>${esc(t.name)}</b> <span class="tag ${st[1]}">${st[0]}</span> <span class="mut">${esc(PLANS[t.plan]?.label||'')}</span></div>
+      <div class="mut" dir="ltr">${esc(t.ownerEmail||'')}</div></div>
+      <div class="feats">${Object.entries(FEATURES).map(([k,l])=>`<label><input type="checkbox" data-f="${k}" ${t.features?.[k]?'checked':''}>${l}</label>`).join('')}</div>
+      <div class="row"><select data-s>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===t.status?'selected':''}>${v[0]}</option>`).join('')}</select>
+      <button class="p" data-save>حفظ</button></div></div>`}).join(''):'<p class="mut">لا يوجد مطاعم بعد.</p>';
+}
+$('list').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-save]');if(!b)return;
+  const box=b.closest('.ten'),id=box.dataset.id;
+  const features=Object.fromEntries([...box.querySelectorAll('[data-f]')].map(i=>[i.dataset.f,i.checked]));
+  b.disabled=true;
+  try{await api.updateTenant(id,{features,status:box.querySelector('[data-s]').value,plan:'custom'});msg('تم الحفظ');await render()}
+  catch(err){msg('فشل الحفظ: '+esc(err.code||err.message),1)}b.disabled=false;
+});
+$('create').onclick=async()=>{
+  const name=$('n_name').value.trim(),mail=$('n_mail').value.trim(),pass=$('n_pass').value;
+  if(!name||!mail||pass.length<8){msg('اكتب الاسم والبريد وكلمة مرور ٨ أحرف على الأقل',1);return}
+  const plan=$('n_plan').value;$('create').disabled=true;
+  try{await api.createTenant(slug(name),{name,plan,status:$('n_status').value,features:feats(PLANS[plan].features),branches:[]},mail,pass);
+    msg('تم إنشاء المطعم وحساب المالك. ابعت له البريد وكلمة المرور المؤقتة.');
+    ['n_name','n_mail','n_pass'].forEach(i=>$(i).value='');await render()}
+  catch(err){msg('فشل الإنشاء: '+esc(err.code||err.message),1)}$('create').disabled=false;
+};
+$('go').onclick=async()=>{try{await api.login($('em').value.trim(),$('pw').value);msg('')}catch(e){msg('بيانات الدخول غير صحيحة',1)}};
+$('out').onclick=()=>api.logout();
+const show=id=>['login','denied','app'].forEach(x=>$(x).classList.toggle('hide',x!==id));
+api.init(async u=>{
+  $('out').classList.toggle('hide',!u);$('who').textContent=u?.email||'';
+  if(!u){show('login');return}
+  if(!(await api.isAdmin(u.uid))){$('uid').textContent=u.uid;show('denied');return}
+  show('app');try{await render()}catch(e){msg('تعذر تحميل المطاعم: '+esc(e.code||e.message),1)}
+});
+</script>
+</body>
+</html>

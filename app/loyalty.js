@@ -113,9 +113,11 @@ function matches(c,q){
   const code=String(q).trim().toLowerCase();
   return t.norm(c.name).indexOf(s)>=0||(d.length>=2&&c.id.indexOf(d)>=0)||(/^[a-z0-9]{5,}$/.test(code)&&String(c.cardId||'').toLowerCase().indexOf(code)===0);
 }
+// عملاء المحفظة بدون تليفون: نعرض كود الكرت القصير بدل الرقم
+const idLabel=c=>c.phone?c.id:'كرت المحفظة · '+String(c.cardId||c.id).slice(0,6).toUpperCase();
 function rowHTML(c,act){
   const t=T(),{esc}=t;const p=P(c);
-  return '<button class="lrow" data-la="'+act+'" data-id="'+esc(c.id)+'"><span class="lw"><b>'+esc(c.name)+'</b><span class="muted" dir="ltr">'+esc(c.id)+'</span></span><span class="lm">'+p.pill+'<span class="muted">'+p.short+' · '+ago(c.last)+'</span></span></button>';
+  return '<button class="lrow" data-la="'+act+'" data-id="'+esc(c.id)+'"><span class="lw"><b>'+esc(c.name)+'</b><span class="muted" dir="ltr">'+esc(idLabel(c))+'</span></span><span class="lm">'+p.pill+'<span class="muted">'+p.short+' · '+ago(c.last)+'</span></span></button>';
 }
 function custList(q){
   const arr=L.cust.filter(c=>matches(c,q)).sort((a,b)=>(b.last||0)-(a.last||0));
@@ -212,7 +214,7 @@ function openCust(id){
   const t=T(),{S,esc,openModal,fmtT,dkey,fromKey}=t;const c=L.cust.find(x=>x.id===id);if(!c){t.closeModal();return}
   const p=P(c);const vs=(c.visits||[]).slice().sort((a,b)=>b-a).slice(0,8);
   const dup=L.dup===id;
-  openModal('<div class="pf lcd"><h2>'+esc(c.name)+'</h2><div class="muted" dir="ltr" style="text-align:start">'+esc(c.id)+'</div>'+
+  openModal('<div class="pf lcd"><h2>'+esc(c.name)+'</h2><div class="muted" dir="ltr" style="text-align:start">'+esc(idLabel(c))+'</div>'+
     '<div class="lcur">'+p.pill+'<b>'+p.big+'</b><span class="muted">'+p.unit+'</span></div>'+p.bar+
     '<p style="margin:0">'+esc(p.nudge)+'</p>'+
     (p.r&&p.r.atRisk?'<div class="bill warn" style="margin:0">قرّب ينزل من فئته لو ما زارش الأسبوع الجاي.</div>':'')+

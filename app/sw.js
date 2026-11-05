@@ -1,5 +1,5 @@
 // Service worker: يخلّي التطبيق يفتح حتى لو النت واقع، ويحدّث نفسه لما النت يرجع.
-const V = 'rafd-v6';
+const V = 'rafd-v7';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'orders.js', 'payroll.js', 'acct.js', 'tiers.js', 'stamps.js', 'scan.js', 'qr.js', 'passview.js', 'loyalty.js', 'design.js', 'home.js', 'firebase-config.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 const CDN = /^(www\.gstatic\.com\/firebasejs\/|fonts\.googleapis\.com\/|fonts\.gstatic\.com\/)/;
 

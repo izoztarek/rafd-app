@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>كرت الولاء | رفد</title>
+<meta name="description" content="كرت ولائك: زياراتك وفئتك والمزايا.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0B3B3A">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#F3F5F2;--surface:#fff;--ink:#0B3B3A;--muted:#44534F;--line:#D4DCD7;--sunk:#E6ECE8;--amber:#F2A93B;--deep:#08302F;--card:#0B3B3A;--card2:#14524F;--cardink:#F3F5F2;--cardmuted:#A9C4C0;--ok:#157A52;--warn-bg:#FFEFC7;--warn:#855400;
+  --font:'IBM Plex Sans Arabic',Tahoma,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#08302F;--surface:#0D3F3D;--ink:#F3F5F2;--muted:#A9C4C0;--line:#1F5E5A;--sunk:#14524F;--card:#0D3F3D;--card2:#1B5E5A;--warn-bg:#3D3010;--warn:#FFC857;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#08302F;--surface:#0D3F3D;--ink:#F3F5F2;--muted:#A9C4C0;--line:#1F5E5A;--sunk:#14524F;--card:#0D3F3D;--card2:#1B5E5A;--warn-bg:#3D3010;--warn:#FFC857;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;min-height:100vh;
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:max(20px,env(safe-area-inset-top,0px)) max(28px,env(safe-area-inset-bottom,0px))}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h2,p{margin:0}
+.pass{position:relative;overflow:hidden;border-radius:28px;background:linear-gradient(160deg,var(--card2) 0,var(--card) 62%);color:var(--cardink);padding:22px 22px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(8,48,47,.15),0 18px 40px rgba(8,48,47,.22)}
+.pass::after{content:"";position:absolute;inset-block-start:-70px;inset-inline-end:-60px;width:190px;height:190px;border-radius:50%;background:var(--amber);opacity:.14;pointer-events:none}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;position:relative;z-index:1}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.mk{flex:none;width:34px;height:34px;border-radius:10px;background:var(--amber) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M20 22h24v20H20z' fill='none' stroke='%230B3B3A' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E") center/70% no-repeat}
+.rest{font-weight:700;font-size:1.1rem;overflow-wrap:anywhere;line-height:1.35}
+.chip{flex:none;padding:.2rem .85rem;border-radius:999px;background:var(--amber);color:#0B3B3A;font-weight:700;font-size:.88rem;white-space:nowrap}
+.chip.new{background:transparent;border:1.5px solid var(--cardmuted);color:var(--cardink)}
+.hello{color:var(--cardmuted);position:relative;z-index:1}
+.hello b{color:var(--cardink);font-weight:600}
+.count{display:flex;align-items:baseline;gap:10px;position:relative;z-index:1}
+.count b{font-size:4.2rem;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.count span{color:var(--cardmuted)}
+.track{height:12px;border-radius:999px;background:rgba(243,245,242,.16);overflow:hidden;position:relative;z-index:1}
+.track i{display:block;height:100%;width:0;border-radius:999px;background:var(--amber);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.nudge{font-weight:600;position:relative;z-index:1}
+.risk{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:.6rem .9rem;font-weight:600;font-size:.92rem;position:relative;z-index:1}
+.qrbox{align-self:center;width:min(190px,60%);background:#fff;border-radius:18px;padding:10px;position:relative;z-index:1}
+.qrbox svg{display:block;width:100%;height:auto;border-radius:8px}
+.qrcap{text-align:center;color:var(--cardmuted);font-size:.88rem;position:relative;z-index:1}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.sec h2{font-size:1rem;color:var(--muted);font-weight:600}
+.sec ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.sec li{display:flex;gap:10px;align-items:flex-start}
+.sec li::before{content:"";flex:none;width:9px;height:9px;margin-top:.55em;border-radius:3px;background:var(--amber)}
+.sec.next li::before{background:var(--line)}
+.note{color:var(--muted);font-size:.88rem;text-align:center}
+.msg{padding:40px 20px;text-align:center;color:var(--muted);border:1.5px dashed var(--line);border-radius:22px}
+.skel{height:300px;border-radius:28px;background:var(--sunk);animation:p 1.2s ease-in-out infinite alternate}
+@keyframes p{from{opacity:.55}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}.track i{transition:none}}
+footer{display:flex;justify-content:center}
+footer a{color:var(--muted);font-size:.85rem;text-decoration:none}
+</style>
+</head>
+<body>
+<main class="wrap" id="root" aria-live="polite"><div class="skel" aria-hidden="true"></div></main>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="tiers.js"></script>
+<script src="qr.js"></script>
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('root'),cur=null,tries=0;
+var WIN={month:'في الشهر ده',rolling30:'في آخر ٣٠ يوم',rolling90:'في آخر ٩٠ يوم',rolling365:'في آخر سنة'};
+var WIN_NOTE={month:'الفئة بتتحسب من زياراتك في الشهر الحالي، وبتبدأ من جديد أول كل شهر.',rolling30:'الفئة بتتحسب من زياراتك في آخر ٣٠ يوم.',rolling90:'الفئة بتتحسب من زياراتك في آخر ٩٠ يوم.',rolling365:'الفئة بتتحسب من زياراتك في آخر سنة.'};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function msg(t){root.innerHTML='<div class="msg">'+esc(t)+'</div>'}
+function list(arr){return '<ul>'+arr.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
+function render(d){
+  var r=RafdTiers.evaluate(d.visits||[],d.cfg,Date.now(),d.tz||0),cfg=d.cfg;
+  var pct=Math.round(r.progress*100);
+  var qrUrl=location.href.split('#')[0];
+  var h='<article class="pass" aria-label="كرت ولاء '+esc(d.rname)+'">'+
+    '<div class="top"><div class="who"><span class="mk" aria-hidden="true"></span><span class="rest">'+esc(d.rname||'كرت الولاء')+'</span></div>'+
+    '<span class="chip'+(r.tier?'':' new')+'">'+(r.tier?esc(r.tier.name):'عضو جديد')+'</span></div>'+
+    '<p class="hello">أهلاً <b>'+esc(d.name)+'</b></p>'+
+    '<div class="count"><b>'+r.count.toLocaleString('ar-EG-u-nu-latn')+'</b><span>زيارة '+(WIN[cfg.window]||'')+'</span></div>'+
+    '<div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>'+
+    '<p class="nudge">'+esc(RafdTiers.nudge(r))+'</p>'+
+    (r.atRisk?'<div class="risk">عشان تحافظ على فئتك، زورنا خلال الأسبوع الجاي.</div>':'')+
+    '<div class="qrbox">'+RafdQR(qrUrl,{label:'كود الكرت'})+'</div><p class="qrcap">اعرض الكود للكاشير</p></article>';
+  if(r.tier&&r.tier.perks&&r.tier.perks.length)h+='<section class="sec"><h2>مزايا فئتك: '+esc(r.tier.name)+'</h2>'+list(r.tier.perks)+'</section>';
+  if(r.next&&r.next.perks&&r.next.perks.length)h+='<section class="sec next"><h2>لما توصل للفئة '+esc(r.next.name)+'</h2>'+list(r.next.perks)+'</section>';
+  h+='<p class="note">'+esc(WIN_NOTE[cfg.window]||'')+'</p><footer><a href="../" rel="noopener">رفد</a></footer>';
+  root.innerHTML=h;
+}
+function show(d){cur=d;try{render(d)}catch(e){msg('الكرت ده فيه بيانات مش مفهومة. كلّم المطعم.')}}
+var id=new URLSearchParams(location.search).get('c')||'';
+if(!/^[A-Za-z0-9]{20,32}$/.test(id)){msg('الرابط مش مظبوط. اطلب من المطعم يبعتلك رابط الكرت تاني.');return}
+if(!window.firebase||!window.FIREBASE_CONFIG||!window.RafdTiers||!window.RafdQR){msg('مقدرتش أحمّل الكرت. اتأكد من النت وافتح الرابط تاني.');return}
+var db;try{db=firebase.initializeApp(window.FIREBASE_CONFIG).firestore()}catch(e){msg('مقدرتش أحمّل الكرت. جرب تاني.');return}
+db.doc('cards/'+id).onSnapshot(function(s){
+  if(!s.exists){msg('الكرت ده مش موجود. اطلب من المطعم رابط جديد.');return}
+  show(s.data());
+},function(){msg('مقدرتش أحمّل الكرت. اتأكد من النت وافتح الرابط تاني.')});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&cur)show(cur)});
+})();
+</script>
+</body>
+</html>

@@ -83,9 +83,9 @@ button:disabled{opacity:.5;cursor:not-allowed}
 const CFG={apiKey:"AIzaSyD2Pc_rC2j10pMO1TN2MumSqamN-szA4uY",authDomain:"rafd-platform-5fb3a.firebaseapp.com",projectId:"rafd-platform-5fb3a",storageBucket:"rafd-platform-5fb3a.firebasestorage.app",messagingSenderId:"251733051157",appId:"1:251733051157:web:dbbd4e9ebb7db770b34b1c"};
 export const FEATURES={attendance:'الحضور',payroll:'المرتبات',closing:'التقفيل',factory:'طلبات المصنع',loyalty:'الولاء والفئات',near:'رسالة القرب',win:'اشتقنا لك'};
 export const PLANS={
-  basic:{label:'الأساسية',features:['attendance','closing']},
-  adv:{label:'المتقدمة',features:['attendance','closing','payroll','loyalty']},
-  biz:{label:'الأعمال',features:['attendance','closing','payroll','loyalty','factory','near','win']},
+  basic:{label:'الأساسية',features:['loyalty']},
+  adv:{label:'المتقدمة',features:['loyalty','near','win']},
+  biz:{label:'الأعمال',features:['loyalty','near','win','attendance','payroll','closing','factory']},
   custom:{label:'مخصصة',features:[]}
 };
 const STATUS={trial:['تجريبي',''],active:['نشط',''],overdue:['متأخر السداد','warn'],suspended:['موقوف','bad'],cancelled:['ملغي','bad']};
@@ -117,7 +117,7 @@ if(new URLSearchParams(location.search).get('mock')==='1'){
       // حساب المالك عبر نسخة تطبيق ثانية حتى لا نخرج من جلسة مالك المنصة
       const sec=initializeApp(CFG,'sec'+Date.now()),sa=A.getAuth(sec);
       const cr=await A.createUserWithEmailAndPassword(sa,mail,pass);const uid=cr.user.uid;await A.signOut(sa);
-      await F.setDoc(F.doc(db,'tenants',id),{...t,ownerEmail:mail,createdAt:F.serverTimestamp()});
+      await F.setDoc(F.doc(db,'tenants',id),{...t,ownerEmail:mail,owner:uid,createdAt:F.serverTimestamp(),...(t.status==='trial'?{trialEnds:F.Timestamp.fromMillis(Date.now()+14*864e5)}:{})});
       await F.setDoc(F.doc(db,'tenants',id,'members',uid),{role:'owner',email:mail,createdAt:F.serverTimestamp()});
       await F.setDoc(F.doc(db,'userTenants',uid),{tid:id,role:'owner',email:mail});
     },
@@ -134,13 +134,22 @@ async function render(){
   $('list').innerHTML=ts.length?ts.map(t=>{
     const st=STATUS[t.status]||[t.status,''];
     return `<div class="ten" data-id="${esc(t.id)}">
-      <div class="top"><div><b>${esc(t.name)}</b> <span class="tag ${st[1]}">${st[0]}</span> <span class="mut">${esc(PLANS[t.plan]?.label||'')}</span></div>
+      <div class="top"><div><b>${esc(t.name)}</b> <span class="tag ${st[1]}">${st[0]}</span> <span class="mut">${esc(PLANS[t.plan]?.label||'')}</span>${t.status==='trial'&&t.trialEnds?.toMillis?` <span class="mut">· التجربة تنتهي ${new Date(t.trialEnds.toMillis()).toLocaleDateString('ar-EG')}</span>`:''}</div>
       <div class="mut" dir="ltr">${esc(t.ownerEmail||'')}</div></div>
       <div class="feats">${Object.entries(FEATURES).map(([k,l])=>`<label><input type="checkbox" data-f="${k}" ${t.features?.[k]?'checked':''}>${l}</label>`).join('')}</div>
       <div class="row"><select data-s>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===t.status?'selected':''}>${v[0]}</option>`).join('')}</select>
-      <button class="p" data-save>حفظ</button></div></div>`}).join(''):'<p class="mut">لا يوجد مطاعم بعد.</p>';
+      <button data-save>حفظ يدوي</button>
+      <select data-plan>${Object.entries(PLANS).filter(([k])=>k!=='custom').map(([k,v])=>`<option value="${k}" ${k===t.plan?'selected':''}>${v.label}</option>`).join('')}</select>
+      <button class="p" data-activate>تفعيل بالباقة</button></div></div>`}).join(''):'<p class="mut">لا يوجد مطاعم بعد.</p>';
 }
 $('list').addEventListener('click',async e=>{
+  const a=e.target.closest('[data-activate]');
+  if(a){
+    const box=a.closest('.ten'),id=box.dataset.id,plan=box.querySelector('[data-plan]').value;
+    a.disabled=true;
+    try{await api.updateTenant(id,{features:feats(PLANS[plan].features),status:'active',plan});msg('تم التفعيل بباقة '+PLANS[plan].label);await render()}
+    catch(err){msg('فشل التفعيل: '+esc(err.code||err.message),1)}a.disabled=false;return;
+  }
   const b=e.target.closest('[data-save]');if(!b)return;
   const box=b.closest('.ten'),id=box.dataset.id;
   const features=Object.fromEntries([...box.querySelectorAll('[data-f]')].map(i=>[i.dataset.f,i.checked]));

@@ -81,11 +81,11 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 <script type="module">
 const CFG={apiKey:"AIzaSyD2Pc_rC2j10pMO1TN2MumSqamN-szA4uY",authDomain:"rafd-platform-5fb3a.firebaseapp.com",projectId:"rafd-platform-5fb3a",storageBucket:"rafd-platform-5fb3a.firebasestorage.app",messagingSenderId:"251733051157",appId:"1:251733051157:web:dbbd4e9ebb7db770b34b1c"};
-export const FEATURES={attendance:'الحضور',payroll:'المرتبات',closing:'التقفيل',factory:'طلبات المصنع',loyalty:'الولاء والفئات',near:'رسالة القرب',win:'اشتقنا لك'};
+export const FEATURES={attendance:'الحضور',payroll:'المرتبات',closing:'التقفيل',factory:'طلبات المصنع',loyalty:'كرت الولاء (أختام)',wallet:'كرت المحفظة',tiers:'فئات العملاء',near:'رسالة القرب',win:'اشتقنا لك',ready:'تنبيه جاهزية الطلب'};
 export const PLANS={
-  basic:{label:'الأساسية',features:['loyalty']},
-  adv:{label:'المتقدمة',features:['loyalty','near','win']},
-  biz:{label:'الأعمال',features:['loyalty','near','win','attendance','payroll','closing','factory']},
+  basic:{label:'الأساسية',features:['loyalty','wallet']},
+  adv:{label:'المتقدمة',features:['loyalty','wallet','tiers','near','win','ready']},
+  biz:{label:'الأعمال',features:['loyalty','wallet','tiers','near','win','ready','attendance','payroll','closing','factory']},
   custom:{label:'مخصصة',features:[]}
 };
 const STATUS={trial:['تجريبي',''],active:['نشط',''],overdue:['متأخر السداد','warn'],suspended:['موقوف','bad'],cancelled:['ملغي','bad']};

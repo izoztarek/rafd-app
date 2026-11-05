@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>أضف كرتك للمحفظة | رفد</title>
+<meta name="description" content="أضف كرت الولاء لمحفظة موبايلك وسجّل زياراتك.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0B3B3A">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#F3F5F2;--surface:#fff;--ink:#0B3B3A;--muted:#44534F;--line:#D4DCD7;--sunk:#E6ECE8;--amber:#F2A93B;--ok:#157A52;--bad:#B3261E;--warn-bg:#FFF4D6;--warn:#6B4A00;--font:'IBM Plex Sans Arabic',Tahoma,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#08302F;--surface:#0D3F3D;--ink:#F3F5F2;--muted:#A9C4C0;--line:#1F5E5A;--sunk:#14524F;--bad:#FFB4AB;--warn-bg:#3D3010;--warn:#FFC857;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#08302F;--surface:#0D3F3D;--ink:#F3F5F2;--muted:#A9C4C0;--line:#1F5E5A;--sunk:#14524F;--bad:#FFB4AB;--warn-bg:#3D3010;--warn:#FFC857;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;min-height:100vh;
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:max(20px,env(safe-area-inset-top,0px)) max(28px,env(safe-area-inset-bottom,0px))}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:18px;align-items:center}
+h1,p{margin:0}
+h1{font-size:1.45rem;line-height:1.35;text-align:center;text-wrap:balance}
+.sub{color:var(--muted);text-align:center}
+.f{display:flex;flex-direction:column;gap:6px;width:100%}
+.f span{font-weight:600}
+.inp{font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:.7rem .9rem;width:100%;min-height:48px}
+.inp:focus-visible,.w:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.ws{display:flex;flex-direction:column;gap:10px;width:100%}
+.w{font:inherit;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;border-radius:16px;border:0;cursor:pointer;background:#0B3B3A;color:#F3F5F2;padding:.6rem 1rem}
+.w.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.w[disabled]{opacity:.5;cursor:not-allowed}
+.note{width:100%;border-radius:14px;padding:.7rem .9rem;background:var(--warn-bg);color:var(--warn);font-size:.95rem}
+.err{color:var(--bad);min-height:1.2em;width:100%;text-align:center}
+.how{width:100%;color:var(--muted);font-size:.95rem;padding-inline-start:1.2rem;margin:0}
+footer{color:var(--muted);font-size:.85rem}
+footer a{color:inherit}
+.pv{border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 12px 28px rgba(0,0,0,.14);max-width:360px;width:100%}
+.pv-h{display:flex;align-items:center;gap:10px;min-width:0}
+.pv-l{flex:none;width:40px;height:40px;border-radius:10px;object-fit:contain}
+.pv-ph{display:inline-block;opacity:.9}
+.pv-t{font-weight:700;font-size:1.1rem;overflow-wrap:anywhere;line-height:1.3}
+.pv-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:8px}
+.pv-s{aspect-ratio:1;border-radius:50%;border:2px solid;display:grid;place-items:center;opacity:.95}
+.pv-s:not(.on){opacity:.55}
+.pv-r{display:flex;flex-direction:column;line-height:1.4}
+.pv-k{font-size:.8rem;opacity:.8}
+.pv-q{align-self:center;width:112px;height:112px;border-radius:14px;background:#fff;display:grid;place-items:center;padding:8px}
+.pv-q svg{width:100%;height:auto;display:block}
+.pv-qp{color:#0B3B3A;font-weight:700;letter-spacing:.1em;opacity:.55}
+.pv-n{text-align:center;font-size:.9rem;opacity:.85}
+</style>
+</head>
+<body>
+<div class="wrap" id="root"><p class="sub" role="status">جاري التحميل...</p></div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="passview.js"></script>
+<script src="wallet-config.js"></script>
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('root');
+function esc(s){return window.RafdPass.esc(s)}
+function msg(t){root.innerHTML='<p class="sub" role="status">'+esc(t)+'</p><footer><a href="../" rel="noopener">رفد</a></footer>'}
+var ua=navigator.userAgent||'',IOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1),AND=/Android/.test(ua);
+var API=String(window.RAFD_WALLET_API||'');
+var tid=new URLSearchParams(location.search).get('t')||'';
+function render(d){
+  var c=window.RafdPass.norm(d);
+  var g='<button class="w" data-w="google" type="button">أضف إلى Google Wallet</button>',a='<button class="w" data-w="apple" type="button">أضف إلى Apple Wallet</button>';
+  var btns=IOS?a+g.replace('class="w"','class="w alt"'):AND?g+a.replace('class="w"','class="w alt"'):g+a.replace('class="w"','class="w alt"');
+  root.innerHTML='<h1>'+esc(c.title||'كرت الولاء')+'</h1><p class="sub">اجمع '+c.n+' زيارات واستلم '+esc(c.reward)+'.</p>'+
+    window.RafdPass.html(c,{filled:0})+
+    '<label class="f"><span>اسمك (اختياري)</span><input class="inp" id="nm" maxlength="40" autocomplete="given-name" placeholder="بيظهر على الكرت"></label>'+
+    '<div class="ws">'+btns+'</div>'+
+    (API?'':'<p class="note" role="status">إضافة الكرت للمحفظة هتشتغل قريباً. ارجع للصفحة دي تاني بعد شوية.</p>')+
+    '<div class="err" id="er" role="alert"></div>'+
+    '<ol class="how"><li>اضغط على محفظتك واضيف الكرت.</li><li>في كل زيارة، وريّ الكود اللي على الكرت للكاشير.</li><li>الختم بيتسجل والكرت بيتحدّث لوحده.</li></ol>'+
+    '<footer><a href="../" rel="noopener">رفد</a></footer>';
+  if(!API)Array.prototype.forEach.call(root.querySelectorAll('.w'),function(b){b.disabled=true});
+}
+root.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('[data-w]');if(!b||!API||b.disabled)return;
+  var er=document.getElementById('er'),nm=document.getElementById('nm');er.textContent='';
+  var all=root.querySelectorAll('.w');Array.prototype.forEach.call(all,function(x){x.disabled=true});
+  fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tid:tid,platform:b.dataset.w,name:(nm&&nm.value||'').trim().slice(0,40)})})
+    .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j&&j.error||'x');return j})})
+    .then(function(j){if(typeof j.url==='string'&&/^https:\/\//.test(j.url))location.href=j.url;else throw new Error('x')})
+    .catch(function(x){er.textContent=x&&x.message&&x.message.indexOf('limit')===0?'المطعم وصل للحد الأقصى من الكروت.':'حصلت مشكلة. جرب تاني بعد شوية.';Array.prototype.forEach.call(all,function(y){y.disabled=false})});
+});
+if(!/^[A-Za-z0-9_-]{1,40}$/.test(tid)){msg('الرابط مش مظبوط. اطلب الملصق من المطعم تاني.');return}
+if(!window.firebase||!window.FIREBASE_CONFIG||!window.RafdPass){msg('مقدرتش أحمّل الصفحة. اتأكد من النت وافتح الرابط تاني.');return}
+var db;try{db=firebase.initializeApp(window.FIREBASE_CONFIG).firestore()}catch(e){msg('مقدرتش أحمّل الصفحة. جرب تاني.');return}
+db.doc('pub/'+tid).get().then(function(s){
+  if(!s.exists){msg('كرت المطعم ده لسه ما اتجهزش.');return}
+  try{render(s.data())}catch(e){msg('الكرت ده فيه بيانات مش مفهومة.')}
+},function(){msg('مقدرتش أحمّل الكرت. اتأكد من النت وافتح الرابط تاني.')});
+})();
+</script>
+</body>
+</html>

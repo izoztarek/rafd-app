@@ -98,7 +98,7 @@ const q=new URLSearchParams(location.search).get('plan');
 if(['basic','adv','biz'].includes(q))$('p-'+q).checked=true;
 
 const slug=s=>(s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24)||'r')+'-'+Math.random().toString(36).slice(2,7);
-const FEATS={attendance:true,payroll:true,closing:true,factory:true,loyalty:true,near:true,win:true};
+const FEATS={attendance:true,payroll:true,closing:true,factory:true,loyalty:true,wallet:true,tiers:true,near:true,win:true,ready:true};
 
 let fb;
 async function load(){

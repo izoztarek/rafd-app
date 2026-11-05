@@ -147,11 +147,12 @@ $('f').addEventListener('submit',async ev=>{
       if(e&&e.code==='auth/email-already-in-use'){
         try{user=(await A.signInWithEmailAndPassword(auth,email,pass)).user}catch(_){throw e}
         const ex=await F.getDoc(F.doc(db,'userTenants',user.uid));
-        if(ex.exists()){location.replace('../app/');return}
+        if(ex.exists()){try{localStorage.setItem('thrills.keep','1')}catch(e){}location.replace('../app/');return}
       }else throw e;
     }
     await createTenant(user,name,plan);
     msg('تم إنشاء حسابك. جارٍ فتح لوحتك...','info');
+    try{localStorage.setItem('thrills.keep','1')}catch(e){}
     setTimeout(()=>location.replace('../app/'),600);
   }catch(e){msg(errText(e));$('go').disabled=false;$('go').textContent='إنشاء الحساب وبدء التجربة'}
 });

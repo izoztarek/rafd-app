@@ -143,13 +143,13 @@ function render(){
   const chips=brs.length>1?'<div class="chips" role="group" aria-label="الفرع">'+
     ['all'].concat(brs.map(b=>b.id)).map(id=>'<button class="chip" data-act="chip" data-b="'+esc(id)+'" aria-pressed="'+(S.branch===id)+'">'+(id==='all'?'كل الفروع':esc(brName(id)))+'</button>').join('')+'</div>':'<span></span>';
   setApp(head()+'<div class="bar">'+chips+'<label class="search"><input id="q" class="inp" type="search" placeholder="دوّر على اسمك" autocomplete="off" value="'+esc(S.search)+'"></label></div>'+
-    '<div class="grid" id="grid"></div><div class="foot"><span id="presence"></span><span>'+(isStandalone()?'':'<button class="linkbtn" data-act="install">ثبّت التطبيق</button> ')+''+(feat('factory')?'<button class="linkbtn" data-oa="open-order">طلب نواقص للمصنع</button> ':'')+(feat('closing')?'<button class="linkbtn" data-aa="open">تقفيل اليوم</button> ':'')+'<button class="linkbtn" data-act="admin-login">دخول المدير</button></span></div>');
+    '<div class="grid" id="grid"></div><div class="foot"><span id="presence"></span><span>'+(isStandalone()?'':'<button class="linkbtn" data-act="install">ثبّت التطبيق</button> ')+''+(feat('factory')?'<button class="linkbtn" data-oa="open-order">طلب نواقص للمصنع</button> ':'')+(feat('closing')?'<button class="linkbtn" data-aa="open">تقفيل اليوم</button> ':'')+(feat('loyalty')?'<button class="linkbtn" data-la="kopen">زيارة عميل</button> ':'')+'<button class="linkbtn" data-act="admin-login">دخول المدير</button></span></div>');
   fillGrid();tick();
 }
-const SECT_ALL=[['att','الحضور',['today','report','staff','alerts']],['ord','الطلبات',['orders','oset']],['pay','المرتبات',['payroll','payset']],['acct','الحسابات',['closes','exps','pnl']],['cfg','الإعدادات',['settings']]];
-const SECT_F={att:'attendance',ord:'factory',pay:'payroll',acct:'closing'};
+const SECT_ALL=[['att','الحضور',['today','report','staff','alerts']],['ord','الطلبات',['orders','oset']],['pay','المرتبات',['payroll','payset']],['acct','الحسابات',['closes','exps','pnl']],['loy','العملاء',['customers','lset']],['cfg','الإعدادات',['settings']]];
+const SECT_F={att:'attendance',ord:'factory',pay:'payroll',acct:'closing',loy:'loyalty'};
 const SECTF=()=>SECT_ALL.filter(x=>!SECT_F[x[0]]||feat(SECT_F[x[0]]));
-const TABN={today:'اليوم',report:'التقارير',staff:'الموظفين',alerts:'التنبيهات',orders:'الطلبات',oset:'الأطعمة',ings:'الخامات',recs:'الوصفات',calc:'حاسبة كوست',payroll:'كشف الشهر',payset:'المرتبات والقواعد',closes:'التقفيلات',exps:'المصروفات',pnl:'ملخص الشهر',settings:'الإعدادات'};
+const TABN={today:'اليوم',report:'التقارير',staff:'الموظفين',alerts:'التنبيهات',orders:'الطلبات',oset:'الأطعمة',ings:'الخامات',recs:'الوصفات',calc:'حاسبة كوست',payroll:'كشف الشهر',payset:'المرتبات والقواعد',closes:'التقفيلات',exps:'المصروفات',pnl:'ملخص الشهر',customers:'العملاء',lset:'الفئات',settings:'الإعدادات'};
 function billBanner(){
   const t=S.tenant;if(!t)return '';
   const te=t.trialEnds&&t.trialEnds.toMillis?t.trialEnds.toMillis():0;
@@ -341,7 +341,7 @@ function showResult(r){
 const isStandalone=()=>{try{return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
 function enterAdmin(){S.view='admin';S.tab='today';S.adm.until=Date.now()+5*60000;S.adm.date=S.today;S.adm.branch='all';render()}
 function logout(){
-  S.view='kiosk';S.draft=null;S.isAdmin=false;closeModal();if(window.ThrillsCost)window.ThrillsCost.clear();if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();
+  S.view='kiosk';S.draft=null;S.isAdmin=false;closeModal();if(window.ThrillsCost)window.ThrillsCost.clear();if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();if(window.ThrillsLoy)window.ThrillsLoy.clear();
   try{localStorage.removeItem('thrills.keep')}catch(e){}
   if(S.auth)S.auth.signOut().catch(()=>{});
   checkDevice().then(ok=>{S.deviceOk=ok;startTenant()});render();
@@ -475,7 +475,7 @@ function tabAlerts(){
 
 function adminBody(){
   const el=$('#abody');if(!el)return;
-  el.innerHTML={today:tabToday,report:tabReport,staff:tabStaff,alerts:tabAlerts,settings:tabSettings,orders:()=>window.ThrillsOrders.tabOrders(),oset:()=>window.ThrillsOrders.tabOset(),ings:()=>window.ThrillsCost.tab('ings'),recs:()=>window.ThrillsCost.tab('recs'),calc:()=>window.ThrillsCost.tab('calc'),payroll:()=>window.ThrillsPay.tab('payroll'),payset:()=>window.ThrillsPay.tab('payset'),closes:()=>window.ThrillsAcct.tab('closes'),exps:()=>window.ThrillsAcct.tab('exps'),pnl:()=>window.ThrillsAcct.tab('pnl')}[S.tab]();
+  el.innerHTML={today:tabToday,report:tabReport,staff:tabStaff,alerts:tabAlerts,settings:tabSettings,orders:()=>window.ThrillsOrders.tabOrders(),oset:()=>window.ThrillsOrders.tabOset(),ings:()=>window.ThrillsCost.tab('ings'),recs:()=>window.ThrillsCost.tab('recs'),calc:()=>window.ThrillsCost.tab('calc'),payroll:()=>window.ThrillsPay.tab('payroll'),payset:()=>window.ThrillsPay.tab('payset'),closes:()=>window.ThrillsAcct.tab('closes'),exps:()=>window.ThrillsAcct.tab('exps'),pnl:()=>window.ThrillsAcct.tab('pnl'),customers:()=>window.ThrillsLoy.tab('customers'),lset:()=>window.ThrillsLoy.tab('lset')}[S.tab]();
 }
 function branchChips(cur,act){
   const brs=S.cfg.branches||[];if(brs.length<2)return '';
@@ -844,7 +844,7 @@ async function checkDevice(){
   try{const d=await S.rawD.doc('tenants/'+S.tid+'/devices/'+u.uid).get();return d.exists}catch(e){return false}
 }
 let unsubs=[];
-function stopTenant(){unsubs.forEach(f=>{try{f()}catch(e){}});unsubs=[];if(unsubAtt){unsubAtt();unsubAtt=null}if(unsubAlerts){unsubAlerts();unsubAlerts=null}}
+function stopTenant(){unsubs.forEach(f=>{try{f()}catch(e){}});unsubs=[];if(window.ThrillsLoy)window.ThrillsLoy.clear();if(unsubAtt){unsubAtt();unsubAtt=null}if(unsubAlerts){unsubAlerts();unsubAlerts=null}}
 function startTenant(){
   stopTenant();
   if(!S.tid||!(S.isAdmin||S.deviceOk)){S.needPair=true;S.db=scoped();render();return}
@@ -907,7 +907,7 @@ async function boot(){
     if(u&&!adm){S.authA.signOut().catch(()=>{})}
     let keep=false;try{keep=localStorage.getItem('thrills.keep')==='1'}catch(e){}
     const flipped=S.isAdmin!==adm;S.isAdmin=adm;if(adm)S.adm.keep=keep;
-    if(!adm){if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();S.alerts=[];if(S.view==='admin')S.view='kiosk'}
+    if(!adm){if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();if(window.ThrillsLoy)window.ThrillsLoy.clear();S.alerts=[];if(S.view==='admin')S.view='kiosk'}
     if(flipped||!S.started){S.started=true;S.deviceOk=await checkDevice();startTenant()}
   });
   S.authD.onAuthStateChanged(async u=>{if(!S.started)return;S.deviceOk=await checkDevice();if(!S.isAdmin)startTenant()});

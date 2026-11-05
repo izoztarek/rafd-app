@@ -62,6 +62,7 @@ const ready=()=>L.ok.c&&L.ok.g;
 const TABS=['customers','lset'];
 function refresh(){
   const t=T();if(!t)return;const {S,$}=t;
+  if(typeof L.onChange==='function'){try{L.onChange()}catch(e){}}
   if(S.view==='admin'&&TABS.indexOf(S.tab)>=0&&$('#abody')){
     const a=document.activeElement;
     if(S.tab==='customers'&&$('#lc-list')){$('#lc-list').innerHTML=custList(L.q);const st=$('#lc-stats');if(st)st.innerHTML=statsHTML();return}
@@ -317,5 +318,10 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target&&(e.target.id==='nf-name'||e.target.id==='nf-phone')){e.preventDefault();create()}
 });
 
-window.ThrillsLoy={tab,clear,openKiosk,_t:{digits,cardDoc,cfgNow,defaultCfg,firstName,trimVisits}};
+function stats(){
+  const d=new Date();d.setHours(0,0,0,0);const from=d.getTime();
+  let today=0;L.cust.forEach(c=>{(c.visits||[]).forEach(v=>{if(v>=from)today++})});
+  return {ready:ready(),customers:L.cust.length,hasCfg:!!L.cfg,visitsToday:today};
+}
+window.ThrillsLoy={tab,clear,openKiosk,sub,stats,onChange:fn=>{L.onChange=fn},_t:{digits,cardDoc,cfgNow,defaultCfg,firstName,trimVisits}};
 })();

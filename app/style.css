@@ -261,3 +261,41 @@ label.f small{font-weight:400}
 .trow{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
 .trow textarea{resize:vertical;min-height:70px}
 .pf{display:flex;flex-direction:column;gap:12px}
+
+/* ---- الرئيسية + الإعداد الأولي + كاشير الولاء ---- */
+.hm-hero{display:flex;flex-direction:column;gap:6px}
+.hm-hero h2{margin:0;font-size:1.45rem;line-height:1.35;text-wrap:balance}
+.hm-hero p{margin:0}
+.hm-prog{display:flex;align-items:center;gap:12px;margin-top:6px}
+.hm-prog .lbar{flex:1}
+.hm-next{display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:24px;background:var(--accent);color:var(--accent-ink)}
+.hm-next h3{margin:0;font-size:1.3rem;text-wrap:balance}
+.hm-next p{margin:0;opacity:.92}
+.hm-next .actions{margin-top:6px}
+.hm-next .btn.pri{background:var(--accent-ink);color:var(--accent);border-color:transparent}
+.hm-tag{align-self:flex-start;padding:.1rem .7rem;border-radius:999px;font-size:.8rem;font-weight:700;background:rgba(255,255,255,.2)}
+.hm-list,.hm-more{display:flex;flex-direction:column;gap:8px}
+.hm-h,.hm-list h3{margin:0;font-size:1rem;color:var(--muted);font-weight:600}
+.hm-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.hm-row .btn,.hm-row .pill{flex:none}
+.hm-t{flex:1;min-width:0;line-height:1.5}
+.hm-ck{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--muted);font-size:.85rem;font-weight:700}
+.hm-row.done .hm-ck{background:var(--ok-bg);color:var(--ok)}
+.hm-row.done .hm-t{color:var(--muted)}
+.wiz{gap:16px}
+.wz-mods{display:flex;flex-direction:column;gap:10px}
+.wz-mod{display:flex;align-items:flex-start;gap:12px;text-align:start;width:100%;padding:14px;border:1.5px solid var(--line);border-radius:18px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:64px}
+.wz-mod small{display:block;color:var(--muted);font-weight:400}
+.wz-mod[aria-pressed="true"]{border-color:var(--accent);background:var(--surface2)}
+.wz-ck{flex:none;width:24px;height:24px;margin-top:2px;border-radius:8px;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.wz-mod[aria-pressed="true"] .wz-ck{background:var(--accent);border-color:var(--accent)}
+.wz-mod[aria-pressed="true"] .wz-ck::after{content:"";width:6px;height:11px;border:solid var(--accent-ink);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+details.adv{border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:4px 16px}
+details.adv>summary{cursor:pointer;padding:12px 0;font-weight:600;min-height:44px}
+details.adv[open]>summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+details.adv .sec{border:0;padding:8px 0;background:transparent}
+.lkiosk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;min-height:50vh;padding:24px 8px}
+.lkiosk h2{margin:0;font-size:1.6rem}
+.lkiosk p{margin:0;max-width:34ch}
+.btn.xl{width:min(420px,100%);min-height:76px;font-size:1.35rem;border-radius:22px}
+@media (prefers-reduced-motion:reduce){.lbar i{transition:none}}

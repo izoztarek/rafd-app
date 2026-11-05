@@ -51,6 +51,9 @@ S.me=null;S.meSearch='';S.meBusy=false;
 try{S.me=localStorage.getItem('thrills.me')}catch(e){}
 
 const feat=k=>!!(S.tenant&&S.tenant.features&&S.tenant.features[k]);
+/* الميزات اللي المالك شغّلها. مطعم قديم بدون modules = كل ميزات باقته شغّالة. */
+const MODS=[['loyalty','كرت الولاء','العملاء بياخدوا كرت وفئات (فضية، ذهبية...) على زياراتهم.'],['attendance','الحضور والانصراف','تسجيل حضور الموظفين من التابلت وتنبيهات التأخير والغياب.'],['payroll','المرتبات','كشف مرتبات الشهر بالخصومات والإضافي، مبني على الحضور.'],['closing','تقفيل اليوم والحسابات','تقفيل الكاشير ومقارنة المبيعات والمصروفات.'],['factory','طلبات المصنع','الفروع تطلب نواقص من المصنع وتتابع الحالة.']];
+const modOn=k=>feat(k)&&(!S.cfg||!S.cfg.modules||S.cfg.modules[k]===true);
 /* ---------- UI helpers ---------- */
 let toastT;
 function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},3500)}
@@ -114,7 +117,7 @@ function inval(kind){
   if(S.view==='kiosk'){if(kind==='cfg')render();else fillGrid()}
   else if(S.view==='me')render();
   else if(S.view==='admin'){
-    const deps={today:['cfg','staff','att'],report:['cfg','staff'],staff:['cfg','staff'],alerts:['alerts','cfg'],settings:[]}[S.tab]||[];
+    const deps={today:['cfg','staff','att'],report:['cfg','staff'],staff:['cfg','staff'],alerts:['alerts','cfg'],settings:[],home:['cfg','staff','att']}[S.tab]||[];
     if(deps.indexOf(kind)>=0)adminBody();
   }
 }
@@ -138,18 +141,24 @@ function render(){
     adminBody();return;
   }
   S.view='kiosk';
+  if(!modOn('attendance')){
+    const lo=modOn('loyalty');
+    setApp(head(false,lo?'كاشير الولاء':'الشاشة')+'<main class="lkiosk">'+(lo?'<h2>سجّل زيارة عميل</h2><p class="muted">اكتب رقم تليفونه أو اسمه. لو جديد هتسجله في ثواني.</p><button class="btn pri xl" data-la="kopen">تسجيل زيارة عميل</button>':'<h2>مفيش ميزة شغّالة على الشاشة دي</h2><p class="muted">ادخل كمدير وشغّل اللي تحتاجه.</p>')+'</main>'+
+      '<div class="foot"><span></span><span>'+(isStandalone()?'':'<button class="linkbtn" data-act="install">ثبّت التطبيق</button> ')+(modOn('factory')?'<button class="linkbtn" data-oa="open-order">طلب نواقص للمصنع</button> ':'')+(modOn('closing')?'<button class="linkbtn" data-aa="open">تقفيل اليوم</button> ':'')+'<button class="linkbtn" data-act="admin-login">دخول المدير</button></span></div>');
+    tick();return;
+  }
   const brs=S.cfg.branches||[];
   if(S.branch!=='all'&&!brs.some(b=>b.id===S.branch))S.branch='all';
   const chips=brs.length>1?'<div class="chips" role="group" aria-label="الفرع">'+
     ['all'].concat(brs.map(b=>b.id)).map(id=>'<button class="chip" data-act="chip" data-b="'+esc(id)+'" aria-pressed="'+(S.branch===id)+'">'+(id==='all'?'كل الفروع':esc(brName(id)))+'</button>').join('')+'</div>':'<span></span>';
   setApp(head()+'<div class="bar">'+chips+'<label class="search"><input id="q" class="inp" type="search" placeholder="دوّر على اسمك" autocomplete="off" value="'+esc(S.search)+'"></label></div>'+
-    '<div class="grid" id="grid"></div><div class="foot"><span id="presence"></span><span>'+(isStandalone()?'':'<button class="linkbtn" data-act="install">ثبّت التطبيق</button> ')+''+(feat('factory')?'<button class="linkbtn" data-oa="open-order">طلب نواقص للمصنع</button> ':'')+(feat('closing')?'<button class="linkbtn" data-aa="open">تقفيل اليوم</button> ':'')+(feat('loyalty')?'<button class="linkbtn" data-la="kopen">زيارة عميل</button> ':'')+'<button class="linkbtn" data-act="admin-login">دخول المدير</button></span></div>');
+    '<div class="grid" id="grid"></div><div class="foot"><span id="presence"></span><span>'+(isStandalone()?'':'<button class="linkbtn" data-act="install">ثبّت التطبيق</button> ')+''+(modOn('factory')?'<button class="linkbtn" data-oa="open-order">طلب نواقص للمصنع</button> ':'')+(modOn('closing')?'<button class="linkbtn" data-aa="open">تقفيل اليوم</button> ':'')+(modOn('loyalty')?'<button class="linkbtn" data-la="kopen">زيارة عميل</button> ':'')+'<button class="linkbtn" data-act="admin-login">دخول المدير</button></span></div>');
   fillGrid();tick();
 }
-const SECT_ALL=[['att','الحضور',['today','report','staff','alerts']],['ord','الطلبات',['orders','oset']],['pay','المرتبات',['payroll','payset']],['acct','الحسابات',['closes','exps','pnl']],['loy','العملاء',['customers','lset']],['cfg','الإعدادات',['settings']]];
+const SECT_ALL=[['home','الرئيسية',['home']],['att','الحضور',['today','report','staff','alerts']],['ord','الطلبات',['orders','oset']],['pay','المرتبات',['payroll','payset']],['acct','الحسابات',['closes','exps','pnl']],['loy','العملاء',['customers','lset']],['cfg','الإعدادات',['settings']]];
 const SECT_F={att:'attendance',ord:'factory',pay:'payroll',acct:'closing',loy:'loyalty'};
-const SECTF=()=>SECT_ALL.filter(x=>!SECT_F[x[0]]||feat(SECT_F[x[0]]));
-const TABN={today:'اليوم',report:'التقارير',staff:'الموظفين',alerts:'التنبيهات',orders:'الطلبات',oset:'الأطعمة',ings:'الخامات',recs:'الوصفات',calc:'حاسبة كوست',payroll:'كشف الشهر',payset:'المرتبات والقواعد',closes:'التقفيلات',exps:'المصروفات',pnl:'ملخص الشهر',customers:'العملاء',lset:'الفئات',settings:'الإعدادات'};
+const SECTF=()=>SECT_ALL.filter(x=>!SECT_F[x[0]]||modOn(SECT_F[x[0]]));
+const TABN={home:'الرئيسية',today:'اليوم',report:'التقارير',staff:'الموظفين',alerts:'التنبيهات',orders:'الطلبات',oset:'الأطعمة',ings:'الخامات',recs:'الوصفات',calc:'حاسبة كوست',payroll:'كشف الشهر',payset:'المرتبات والقواعد',closes:'التقفيلات',exps:'المصروفات',pnl:'ملخص الشهر',customers:'العملاء',lset:'الفئات',settings:'الإعدادات'};
 function billBanner(){
   const t=S.tenant;if(!t)return '';
   const te=t.trialEnds&&t.trialEnds.toMillis?t.trialEnds.toMillis():0;
@@ -163,7 +172,7 @@ function billBanner(){
   return '<div class="bill '+cls+'" role="status"><span>'+msg+'</span><a href="../#plans">اختر باقتك</a></div>';
 }
 function head(admin,sub){
-  return '<header class="top"><div class="brand"><span class="logo">'+esc(S.tenant&&S.tenant.name||'رفد')+'</span><span class="sub">'+(sub||(admin?'لوحة المدير':'الحضور والانصراف'))+'</span></div>'+
+  return '<header class="top"><div class="brand"><span class="logo">'+esc(S.tenant&&S.tenant.name||'رفد')+'</span><span class="sub">'+(sub||(admin?'لوحة المدير':(S.cfg&&modOn('attendance')?'الحضور والانصراف':'')))+'</span></div>'+
     (admin?'<button class="btn" data-act="logout">خروج</button>':'<div class="clock"><b id="clk"></b><span id="dt"></span></div>')+'</header>'+(admin?billBanner():'');
 }
 function clockUpdate(){
@@ -339,7 +348,7 @@ function showResult(r){
 /* ---------- admin ---------- */
 /* ---------- admin auth ---------- */
 const isStandalone=()=>{try{return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
-function enterAdmin(){S.view='admin';S.tab='today';S.adm.until=Date.now()+5*60000;S.adm.date=S.today;S.adm.branch='all';render()}
+function enterAdmin(){S.view='admin';S.tab='home';S.adm.until=Date.now()+5*60000;S.adm.date=S.today;S.adm.branch='all';render()}
 function logout(){
   S.view='kiosk';S.draft=null;S.isAdmin=false;closeModal();if(window.ThrillsCost)window.ThrillsCost.clear();if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();if(window.ThrillsLoy)window.ThrillsLoy.clear();
   try{localStorage.removeItem('thrills.keep')}catch(e){}
@@ -429,7 +438,7 @@ function afterIn(st,rec){
   else if(-off>=early&&early>0){if(on.early!==false)claimAlert('early_'+id,'early',st,'⭐ '+st.name+' حضر بدري '+fmtDur(-off)+(where?' ('+where+')':'')+' - الساعة '+fmtT(rec.inAt))}
 }
 function sweep(){
-  if(!S.db||!S.cfg||!S.cfg.ntfyTopic||!S.loaded.staff||!S.loaded.att)return;
+  if(!S.db||!S.cfg||!modOn('attendance')||!S.cfg.ntfyTopic||!S.loaded.staff||!S.loaded.att)return;
   const on=S.cfg.alertOn||{},now=Date.now(),today=S.today,wd=fromKey(today).getDay();
   const absAfter=(S.cfg.absentAfter==null?60:S.cfg.absentAfter)*60000,fg=(S.cfg.forgotHours==null?12:S.cfg.forgotHours)*3600e3;
   S.staff.forEach(st=>{
@@ -475,7 +484,7 @@ function tabAlerts(){
 
 function adminBody(){
   const el=$('#abody');if(!el)return;
-  el.innerHTML={today:tabToday,report:tabReport,staff:tabStaff,alerts:tabAlerts,settings:tabSettings,orders:()=>window.ThrillsOrders.tabOrders(),oset:()=>window.ThrillsOrders.tabOset(),ings:()=>window.ThrillsCost.tab('ings'),recs:()=>window.ThrillsCost.tab('recs'),calc:()=>window.ThrillsCost.tab('calc'),payroll:()=>window.ThrillsPay.tab('payroll'),payset:()=>window.ThrillsPay.tab('payset'),closes:()=>window.ThrillsAcct.tab('closes'),exps:()=>window.ThrillsAcct.tab('exps'),pnl:()=>window.ThrillsAcct.tab('pnl'),customers:()=>window.ThrillsLoy.tab('customers'),lset:()=>window.ThrillsLoy.tab('lset')}[S.tab]();
+  el.innerHTML={home:()=>window.RafdHome.tab(),today:tabToday,report:tabReport,staff:tabStaff,alerts:tabAlerts,settings:tabSettings,orders:()=>window.ThrillsOrders.tabOrders(),oset:()=>window.ThrillsOrders.tabOset(),ings:()=>window.ThrillsCost.tab('ings'),recs:()=>window.ThrillsCost.tab('recs'),calc:()=>window.ThrillsCost.tab('calc'),payroll:()=>window.ThrillsPay.tab('payroll'),payset:()=>window.ThrillsPay.tab('payset'),closes:()=>window.ThrillsAcct.tab('closes'),exps:()=>window.ThrillsAcct.tab('exps'),pnl:()=>window.ThrillsAcct.tab('pnl'),customers:()=>window.ThrillsLoy.tab('customers'),lset:()=>window.ThrillsLoy.tab('lset')}[S.tab]();
 }
 function branchChips(cur,act){
   const brs=S.cfg.branches||[];if(brs.length<2)return '';
@@ -708,7 +717,7 @@ function newDraft(c){
   c=c||{};const al=c.alertOn||{};
   return{branches:(c.branches&&c.branches.length?c.branches:[{id:uid('b'),name:''}]).map(b=>({id:b.id,name:b.name})),
     shifts:(c.shifts&&c.shifts.length?c.shifts:[{id:uid('sh'),name:'صباحي',start:'09:00'},{id:uid('sh'),name:'مسائي',start:'17:00'}]).map(x=>({id:x.id,name:x.name,start:x.start})),
-    grace:c.grace==null?10:c.grace,earlyMin:c.earlyMin==null?30:c.earlyMin,absentAfter:c.absentAfter==null?60:c.absentAfter,forgotHours:c.forgotHours==null?12:c.forgotHours,shiftHours:c.shiftHours==null?9:c.shiftHours,earlyTol:c.earlyTol==null?10:c.earlyTol,owners:Array.isArray(c.owners)?c.owners.join('، '):(c.owners||'زياد، سيد، إبراهيم'),
+    grace:c.grace==null?10:c.grace,earlyMin:c.earlyMin==null?30:c.earlyMin,absentAfter:c.absentAfter==null?60:c.absentAfter,forgotHours:c.forgotHours==null?12:c.forgotHours,shiftHours:c.shiftHours==null?9:c.shiftHours,earlyTol:c.earlyTol==null?10:c.earlyTol,owners:Array.isArray(c.owners)?c.owners.join('، '):(c.owners||''),
     alertOn:{late:al.late!==false,early:al.early!==false,absent:al.absent!==false,forgot:al.forgot!==false},
     ntfyTopic:c.ntfyTopic||newTopic(),email:'',pw:'',pw2:''};
 }
@@ -719,7 +728,7 @@ function cfgForm(setup){
   return '<section class="sec"><h3>الفروع</h3>'+d.branches.map((b,i)=>'<div class="line"><label class="f">اسم الفرع<input class="inp" data-list="branches" data-i="'+i+'" data-f="name" value="'+esc(b.name)+'" placeholder="مثلاً: فرع المعادي"></label>'+
       (d.branches.length>1?'<button class="btn sm bad" data-act="cfg-del" data-l="branches" data-i="'+i+'">شيل</button>':'')+'</div>').join('')+
     '<div><button class="btn sm" data-act="cfg-add" data-l="branches">+ فرع</button></div></section>'+
-    '<section class="sec"><h3>الشيفتات</h3>'+d.shifts.map((x,i)=>'<div class="line"><label class="f">الاسم<input class="inp" data-list="shifts" data-i="'+i+'" data-f="name" value="'+esc(x.name)+'"></label>'+
+    (()=>{const adv='<section class="sec"><h3>الشيفتات</h3>'+d.shifts.map((x,i)=>'<div class="line"><label class="f">الاسم<input class="inp" data-list="shifts" data-i="'+i+'" data-f="name" value="'+esc(x.name)+'"></label>'+
       '<label class="f">بيبدأ الساعة<input class="inp" type="time" data-list="shifts" data-i="'+i+'" data-f="start" value="'+esc(x.start)+'"></label>'+
       (d.shifts.length>1?'<button class="btn sm bad" data-act="cfg-del" data-l="shifts" data-i="'+i+'">شيل</button>':'')+'</div>').join('')+
     '<div><button class="btn sm" data-act="cfg-add" data-l="shifts">+ شيفت</button></div></section>'+
@@ -730,7 +739,8 @@ function cfgForm(setup){
     '</section><section class="sec"><h3>الورديات والانصراف المبكر</h3><div class="row2">'+num('shiftHours','عدد ساعات الوردية','بتتحسب منها نهاية الشيفت والإضافي.',16)+num('earlyTol','سماح الانصراف المبكر (دقيقة)','لو باقي على نهاية الشيفت أكتر من كده، التابلت يسأل الموظف.',60)+'</div>'+
     '<label class="f">الملّاك (اللي بيتبلّغوا بالانصراف المبكر)<input class="inp" data-k="owners" value="'+esc(d.owners)+'" autocomplete="off"><small>افصل بين الأسماء بفاصلة.</small></label></section>'+
     '<section class="sec"><h3>قناة التنبيهات</h3>'+
-    '<label class="f">اسم قناة التنبيهات (Topic)<input class="inp" dir="ltr" data-k="ntfyTopic" value="'+esc(d.ntfyTopic)+'" autocomplete="off"><small>اتولّد عشوائي. بتشترك فيه من تطبيق ntfy على موبايلك. متشاركوش مع حد.</small></label></section>'+
+    '<label class="f">اسم قناة التنبيهات (Topic)<input class="inp" dir="ltr" data-k="ntfyTopic" value="'+esc(d.ntfyTopic)+'" autocomplete="off"><small>اتولّد عشوائي. بتشترك فيه من تطبيق ntfy على موبايلك. متشاركوش مع حد.</small></label></section>';
+      return modOn('attendance')?'<details class="adv"><summary>إعدادات الحضور المتقدمة (الشيفتات والتنبيهات)</summary>'+adv+'</details>':''})()+
     (false?'<section class="sec"><h3>حساب المدير</h3><small>الإيميل والباسورد دول هتدخل بيهم لوحة المدير. اكتبهم وخليهم معاك.</small>'+
       '<label class="f">الإيميل<input class="inp" type="email" dir="ltr" autocomplete="username" data-k="email" value="'+esc(d.email)+'"></label>'+
       '<label class="f">الباسورد (8 حروف أو أكتر)<input class="inp" type="password" dir="ltr" autocomplete="new-password" data-k="pw" value="'+esc(d.pw)+'"></label>'+
@@ -738,8 +748,24 @@ function cfgForm(setup){
     '<section class="sec"><h3>حساب المدير</h3><small>داخل بـ <b dir="ltr">'+esc(S.fbUser&&S.fbUser.email||'')+'</b></small><div class="actions"><button class="btn sm" data-act="reset-pw">ابعتلي لينك تغيير الباسورد</button></div></section>')+
     '<div class="err" id="c-err"></div><div class="actions"><button class="btn pri" data-act="cfg-save" id="c-save">'+(setup?'ابدأ':'حفظ الإعدادات')+'</button></div>';
 }
-function setupHTML(){return '<main class="panel"><h2>إعداد أولي</h2><p class="muted" style="margin:0">خطوة واحدة بس. بعدها تضيف الموظفين من لوحة المدير.</p>'+cfgForm(true)+'</main>'}
-function tabSettings(){if(!S.draft)S.draft=newDraft(S.cfg);return '<h2 style="font-size:1.3rem">الإعدادات</h2>'+pairSec()+cfgForm(false)}
+function setupHTML(){
+  const prim=['loyalty','attendance'].filter(feat),keys=prim.length?prim:MODS.map(m=>m[0]).filter(feat);
+  if(!S.wiz){const m={};keys.forEach((k,i)=>{m[k]=i===0});S.wiz={modules:m,branch:(S.tenant&&S.tenant.name)||''}}
+  const w=S.wiz;
+  return '<main class="panel wiz"><h2>أهلاً بيك في رفد</h2><p class="muted" style="margin:0">سؤالين بس وتبدأ. تقدر تغيّر أي حاجة بعد كده.</p>'+
+    '<section class="sec"><h3>1. اسم المطعم أو الفرع</h3><label class="f"><input class="inp" id="wz-branch" autocomplete="off" placeholder="مثلاً: فرع المعادي" value="'+esc(w.branch)+'"></label></section>'+
+    '<section class="sec"><h3>2. تبدأ بإيه؟</h3><small>اختار اللي عايزه دلوقتي. الباقي بتشغّله لما تحتاجه.</small><div class="wz-mods">'+
+    keys.map(k=>{const m=MODS.find(x=>x[0]===k);return '<button type="button" class="wz-mod" data-act="wz-toggle" data-m="'+k+'" aria-pressed="'+(!!w.modules[k])+'"><span class="wz-ck" aria-hidden="true"></span><span><b>'+esc(m[1])+'</b><small>'+esc(m[2])+'</small></span></button>'}).join('')+'</div></section>'+
+    '<div class="err" id="c-err"></div><div class="actions"><button class="btn pri lg" data-act="wz-go" id="c-save">يلا نبدأ</button></div></main>';
+}
+function modsSec(){
+  const on=MODS.filter(m=>modOn(m[0])),off=MODS.filter(m=>feat(m[0])&&!modOn(m[0])&&(m[0]!=='payroll'||modOn('attendance')));
+  if(!on.length&&!off.length)return '';
+  return '<section class="sec"><h3>الميزات</h3><small>شغّل اللي محتاجه بس. لما تقفل ميزة بياناتها بتفضل محفوظة.</small>'+
+    on.map(m=>'<div class="hm-row"><span class="hm-t"><b>'+esc(m[1])+'</b></span><span class="pill ok">شغّالة</span><button class="btn sm" data-ha="disable" data-m="'+m[0]+'">قفلها</button></div>').join('')+
+    off.map(m=>'<div class="hm-row"><span class="hm-t"><b>'+esc(m[1])+'</b><small class="muted" style="display:block">'+esc(m[2])+'</small></span><button class="btn sm pri" data-ha="enable" data-m="'+m[0]+'">شغّلها</button></div>').join('')+'</section>';
+}
+function tabSettings(){if(!S.draft)S.draft=newDraft(S.cfg);return '<h2 style="font-size:1.3rem">الإعدادات</h2>'+pairSec()+modsSec()+cfgForm(false)}
 async function saveCfg(setup){
   const d=S.draft,err=m=>{const e=$('#c-err');if(e)e.textContent=m};
   const branches=d.branches.map(b=>({id:b.id,name:b.name.trim()})).filter(b=>b.name);
@@ -760,10 +786,12 @@ async function saveCfg(setup){
   if(!setup){const gone=(S.cfg.branches||[]).filter(b=>!branches.some(x=>x.id===b.id));
     if(gone.some(b=>S.staff.some(s=>s.branch===b.id)))return err('في موظفين على فرع عايز تشيله. انقلهم لفرع تاني الأول.')}
   const next={branches,shifts,grace,earlyMin,absentAfter,forgotHours,shiftHours,earlyTol,owners,alertOn:Object.assign({},d.alertOn),ntfyTopic:topic,createdAt:setup?Date.now():(S.cfg.createdAt||Date.now())};
+  if(setup&&S.wiz){const mm={};MODS.forEach(m=>{mm[m[0]]=feat(m[0])&&S.wiz.modules[m[0]]===true});next.modules=mm}
+  else if(!setup&&S.cfg.modules)next.modules=Object.assign({},S.cfg.modules);
   const btn=$('#c-save');
   if(setup){
     if(btn)btn.disabled=true;err('');
-    if(await wr(()=>S.db.doc('config/main').set(next))){S.cfg=next;S.draft=null;S.view='admin';S.tab='staff';S.adm.until=Date.now()+5*60000;render();toast('تمام. دلوقتي ضيف الموظفين')}
+    if(await wr(()=>S.db.doc('config/main').set(next))){S.cfg=next;S.draft=null;S.wiz=null;S.view='admin';S.tab='home';S.adm.until=Date.now()+5*60000;render();toast('تمام. ابدأ من الخطوة الجاية')}
     else if(btn)btn.disabled=false;
     return;
   }
@@ -813,12 +841,19 @@ document.addEventListener('click',async e=>{
     case 'cfg-add':{const l=t.dataset.l;S.draft[l].push(l==='branches'?{id:uid('b'),name:''}:{id:uid('sh'),name:'',start:'09:00'});S.view==='admin'?adminBody():render()}break;
     case 'cfg-del':{S.draft[t.dataset.l].splice(Number(t.dataset.i),1);S.view==='admin'?adminBody():render()}break;
     case 'cfg-save':await saveCfg(!S.cfg);break;
+    case 'wz-toggle':{if(S.wiz){const k=t.dataset.m;S.wiz.modules[k]=!S.wiz.modules[k];render()}}break;
+    case 'wz-go':{
+      const nm=String(S.wiz&&S.wiz.branch||'').trim();
+      if(!nm){const e=$('#c-err');if(e)e.textContent='اكتب اسم المطعم أو الفرع';break}
+      S.draft=newDraft();S.draft.branches=[{id:uid('b'),name:nm}];await saveCfg(true);
+    }break;
   }
 });
 document.addEventListener('input',e=>{
   const t=e.target;
   if(t.id==='q'){S.search=t.value;fillGrid();return}
   if(t.id==='mq'){S.meSearch=t.value;meFill();return}
+  if(t.id==='wz-branch'){if(S.wiz)S.wiz.branch=t.value;return}
   if(t.dataset.list){S.draft[t.dataset.list][Number(t.dataset.i)][t.dataset.f]=t.value;return}
   if(t.dataset.k&&S.draft){S.draft[t.dataset.k]=t.value}
 });
@@ -844,7 +879,7 @@ async function checkDevice(){
   try{const d=await S.rawD.doc('tenants/'+S.tid+'/devices/'+u.uid).get();return d.exists}catch(e){return false}
 }
 let unsubs=[];
-function stopTenant(){unsubs.forEach(f=>{try{f()}catch(e){}});unsubs=[];if(window.ThrillsLoy)window.ThrillsLoy.clear();if(unsubAtt){unsubAtt();unsubAtt=null}if(unsubAlerts){unsubAlerts();unsubAlerts=null}}
+function stopTenant(){unsubs.forEach(f=>{try{f()}catch(e){}});unsubs=[];if(window.ThrillsLoy)window.ThrillsLoy.clear();if(window.RafdHome)window.RafdHome.clear();if(unsubAtt){unsubAtt();unsubAtt=null}if(unsubAlerts){unsubAlerts();unsubAlerts=null}}
 function startTenant(){
   stopTenant();
   if(!S.tid||!(S.isAdmin||S.deviceOk)){S.needPair=true;S.db=scoped();render();return}
@@ -907,15 +942,15 @@ async function boot(){
     if(u&&!adm){S.authA.signOut().catch(()=>{})}
     let keep=false;try{keep=localStorage.getItem('thrills.keep')==='1'}catch(e){}
     const flipped=S.isAdmin!==adm;S.isAdmin=adm;if(adm)S.adm.keep=keep;
-    if(!adm){if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();if(window.ThrillsLoy)window.ThrillsLoy.clear();S.alerts=[];if(S.view==='admin')S.view='kiosk'}
-    if(flipped||!S.started){S.started=true;S.deviceOk=await checkDevice();startTenant()}
+    if(!adm){if(window.ThrillsPay)window.ThrillsPay.clear();if(window.ThrillsAcct)window.ThrillsAcct.clear();if(window.ThrillsLoy)window.ThrillsLoy.clear();if(window.RafdHome)window.RafdHome.clear();S.alerts=[];if(S.view==='admin')S.view='kiosk'}
+    if(flipped||!S.started){S.started=true;S.deviceOk=await checkDevice();startTenant();if(adm&&keep&&!S.deviceOk&&!S.meMode&&S.view!=='admin')enterAdmin()}
   });
   S.authD.onAuthStateChanged(async u=>{if(!S.started)return;S.deviceOk=await checkDevice();if(!S.isAdmin)startTenant()});
   setInterval(tick,5000);
   setInterval(sweep,60000);setTimeout(sweep,10000);
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
-window.__T={openPin,S,$,esc,toast,wr,offsetOf,atTime,addDays,fromKey,OPEN_MAX,DAYS,fmtDateY,shiftOf,fmtHM,hm,push,openModal,closeModal,mapDocs,fmtT,fmtDate,fmtDur,dkey,uid,brName,hashPin,newTopic,setApp,head,render,norm,adminBody};
+window.__T={modOn,MODS,feat,openPin,S,$,esc,toast,wr,offsetOf,atTime,addDays,fromKey,OPEN_MAX,DAYS,fmtDateY,shiftOf,fmtHM,hm,push,openModal,closeModal,mapDocs,fmtT,fmtDate,fmtDur,dkey,uid,brName,hashPin,newTopic,setApp,head,render,norm,adminBody};
 boot();
 
 
